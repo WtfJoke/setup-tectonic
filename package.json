@@ -1,8 +1,8 @@
 {
-  "name": "typescript-action",
-  "version": "0.0.0",
+  "name": "setup-tectonic",
+  "version": "0.0.1",
   "private": true,
-  "description": "TypeScript template action",
+  "description": "Sets up Tectonic for Github Actions",
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
@@ -15,11 +15,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/actions/typescript-action.git"
+    "url": "git+https://github.com/WtfJoke/setup-tectonic"
   },
   "keywords": [
     "actions",
-    "node",
+    "tectonic",
     "setup"
   ],
   "author": "",
@@ -28,16 +28,16 @@
     "@actions/core": "^1.2.6"
   },
   "devDependencies": {
-    "@types/jest": "^26.0.15",
+    "@types/jest": "^26.0.20",
     "@types/node": "^14.14.9",
-    "@typescript-eslint/parser": "^4.8.1",
-    "@vercel/ncc": "^0.25.1",
-    "eslint": "^7.17.0",
+    "@typescript-eslint/parser": "^4.14.0",
+    "@vercel/ncc": "^0.27.0",
+    "eslint": "^7.18.0",
     "eslint-plugin-github": "^4.1.1",
     "eslint-plugin-jest": "^24.1.3",
     "jest": "^26.6.3",
     "jest-circus": "^26.6.3",
-    "js-yaml": "^3.14.0",
+    "js-yaml": "^4.0.0",
     "prettier": "2.2.1",
     "ts-jest": "^26.4.4",
     "typescript": "^4.1.3"
