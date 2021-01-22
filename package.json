@@ -1,8 +1,8 @@
 {
-  "name": "typescript-action",
-  "version": "0.0.0",
+  "name": "setup-tectonic",
+  "version": "0.0.1",
   "private": true,
-  "description": "TypeScript template action",
+  "description": "Sets up Tectonic for Github Actions",
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
@@ -15,11 +15,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/actions/typescript-action.git"
+    "url": "git+https://github.com/WtfJoke/setup-tectonic"
   },
   "keywords": [
     "actions",
-    "node",
+    "tectonic",
     "setup"
   ],
   "author": "",
