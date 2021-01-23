@@ -1,11 +1,19 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Setup Tectonic'
+description: 'Sets up Tectonic for Github Actions'
+author: 'WtfJoke'
 inputs:
-  milliseconds: # change this
+  github-token:
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+    description: 'The GITHUB_TOKEN secret. Used for querying tectonic releases'
+  tectonic-version: 
+    required: false
+    description: 'The version of tectonic to install. A value of `latest` will install the latest version of tectonic. Defaults to `latest`.'
+    default: 'latest'
+  setup-biber: 
+    required: false
+    description: 'Set to true in case you want to have biblatex biber set up'
+    default: 'false'
+  
 runs:
   using: 'node12'
   main: 'dist/index.js'
