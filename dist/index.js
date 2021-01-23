@@ -268,7 +268,7 @@ function setUpTectonic() {
             const release = yield release_1.getTectonicRelease(githubToken, version);
             const platform = mapOS(os.platform());
             core.debug(`Getting build for Tectonic version ${release.version}: ${platform}`);
-            core.info(`Release: ${JSON.stringify(release)}`);
+            core.debug(`Release: ${JSON.stringify(release)}`);
             const asset = release.getAsset(platform);
             if (!asset) {
                 throw new Error(`Tectonic version ${version} not available for ${platform}`);

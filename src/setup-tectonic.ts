@@ -70,7 +70,7 @@ export async function setUpTectonic(): Promise<Release> {
     core.debug(
       `Getting build for Tectonic version ${release.version}: ${platform}`
     )
-    core.info(`Release: ${JSON.stringify(release)}`)
+    core.debug(`Release: ${JSON.stringify(release)}`)
     const asset = release.getAsset(platform)
     if (!asset) {
       throw new Error(
