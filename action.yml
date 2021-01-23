@@ -9,10 +9,6 @@ inputs:
     required: false
     description: 'The version of tectonic to install. A value of `latest` will install the latest version of tectonic. Defaults to `latest`.'
     default: 'latest'
-  setup-biber: 
-    required: false
-    description: 'Set to true in case you want to have biblatex biber set up'
-    default: 'false'
   
 runs:
   using: 'node12'

@@ -1,4 +1,4 @@
-name: 'build-test'
+name: 'CI'
 on: # rebuild any PRs and main branch changes
   pull_request:
   push:
@@ -13,7 +13,10 @@ jobs:
       - run: |
           npm run all
   test: # make sure the action works on a clean machine without building
-    runs-on: windows-latest
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-20.04, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
       - uses: ./
