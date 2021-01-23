@@ -263,7 +263,6 @@ function setUpTectonic() {
         try {
             const githubToken = core.getInput('github-token', { required: true });
             const version = core.getInput('tectonic_version');
-            // const useBiber = core.getInput('setup_biber') === 'true'
             core.debug(`Finding releases for Tectonic version ${version}`);
             const release = yield release_1.getTectonicRelease(githubToken, version);
             const platform = mapOS(os.platform());

@@ -62,7 +62,6 @@ export async function setUpTectonic(): Promise<Release> {
   try {
     const githubToken = core.getInput('github-token', {required: true})
     const version = core.getInput('tectonic_version')
-    // const useBiber = core.getInput('setup_biber') === 'true'
 
     core.debug(`Finding releases for Tectonic version ${version}`)
     const release = await getTectonicRelease(githubToken, version)
