@@ -204,7 +204,6 @@ const io = __importStar(__nccwpck_require__(7436));
 const core = __importStar(__nccwpck_require__(2186));
 const tc = __importStar(__nccwpck_require__(7784));
 const release_1 = __nccwpck_require__(878);
-const constants_1 = __nccwpck_require__(5105);
 // os in [darwin, linux, win32...] (https://nodejs.org/api/os.html#os_os_platform)
 // return value in [darwin, linux, windows]
 const mapOS = (osKey) => {
@@ -213,15 +212,11 @@ const mapOS = (osKey) => {
     };
     return mappings[osKey] || osKey;
 };
-const downloadTectonic = (url, version) => __awaiter(void 0, void 0, void 0, function* () {
-    let tectonicPath = tc.find(constants_1.TECTONIC, version);
-    if (tectonicPath) {
-        core.debug(`Found tectonic ${version} in tools cache`);
-        return tectonicPath;
-    }
+const downloadTectonic = (url) => __awaiter(void 0, void 0, void 0, function* () {
     core.debug(`Downloading Tectonic from ${url}`);
     const archivePath = yield tc.downloadTool(url);
     core.debug('Extracting Tectonic');
+    let tectonicPath;
     if (url.endsWith('.zip')) {
         tectonicPath = yield tc.extractZip(archivePath);
     }
@@ -235,7 +230,6 @@ const downloadTectonic = (url, version) => __awaiter(void 0, void 0, void 0, fun
     if (!archivePath || !tectonicPath) {
         throw new Error(`Unable to download tectonic from ${url}`);
     }
-    tc.cacheDir(tectonicPath, constants_1.TECTONIC, version);
     return tectonicPath;
 });
 const createPathForAppImage = (appPath) => __awaiter(void 0, void 0, void 0, function* () {
@@ -265,7 +259,7 @@ const setUpTectonic = () => __awaiter(void 0, void 0, void 0, function* () {
         if (!asset) {
             throw new Error(`Tectonic version ${version} not available for ${platform}`);
         }
-        const tectonicPath = yield downloadTectonic(asset.url, release.version);
+        const tectonicPath = yield downloadTectonic(asset.url);
         core.addPath(tectonicPath);
         return release;
     }
