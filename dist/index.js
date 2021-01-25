@@ -8,10 +8,10 @@ require('./sourcemap-register.js');module.exports =
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.REPO_NAME = exports.REPO_OWNER = exports.RELEASE_TAG_IDENTIFIER = void 0;
+exports.TECTONIC = exports.REPO_OWNER = exports.RELEASE_TAG_IDENTIFIER = void 0;
 exports.RELEASE_TAG_IDENTIFIER = 'tectonic@';
 exports.REPO_OWNER = 'tectonic-typesetting';
-exports.REPO_NAME = 'tectonic';
+exports.TECTONIC = 'tectonic';
 
 
 /***/ }),
@@ -127,7 +127,7 @@ const getTectonicRelease = (githubToken, version) => __awaiter(void 0, void 0, v
     if (version) {
         const releaseResult = yield octo.repos.getReleaseByTag({
             owner: constants.REPO_OWNER,
-            repo: constants.REPO_NAME,
+            repo: constants.TECTONIC,
             tag: constants.RELEASE_TAG_IDENTIFIER + version
         });
         if (releaseResult.status === 200) {
@@ -141,7 +141,7 @@ exports.getTectonicRelease = getTectonicRelease;
 const getLatestRelease = (octo) => __awaiter(void 0, void 0, void 0, function* () {
     const releasesResult = yield octo.repos.listReleases({
         owner: constants.REPO_OWNER,
-        repo: constants.REPO_NAME
+        repo: constants.TECTONIC
     });
     const releaseData = releasesResult.data.find(release => release.tag_name.startsWith(constants.RELEASE_TAG_IDENTIFIER));
     if (releaseData) {
@@ -204,6 +204,7 @@ const io = __importStar(__nccwpck_require__(7436));
 const core = __importStar(__nccwpck_require__(2186));
 const tc = __importStar(__nccwpck_require__(7784));
 const release_1 = __nccwpck_require__(878);
+const constants_1 = __nccwpck_require__(5105);
 // os in [darwin, linux, win32...] (https://nodejs.org/api/os.html#os_os_platform)
 // return value in [darwin, linux, windows]
 const mapOS = (osKey) => {
@@ -212,11 +213,15 @@ const mapOS = (osKey) => {
     };
     return mappings[osKey] || osKey;
 };
-const downloadTectonic = (url) => __awaiter(void 0, void 0, void 0, function* () {
+const downloadTectonic = (url, version) => __awaiter(void 0, void 0, void 0, function* () {
+    let tectonicPath = tc.find(constants_1.TECTONIC, version);
+    if (tectonicPath) {
+        core.debug(`Found tectonic ${version} in tools cache`);
+        return tectonicPath;
+    }
     core.debug(`Downloading Tectonic from ${url}`);
     const archivePath = yield tc.downloadTool(url);
     core.debug('Extracting Tectonic');
-    let tectonicPath = '';
     if (url.endsWith('.zip')) {
         tectonicPath = yield tc.extractZip(archivePath);
     }
@@ -230,6 +235,7 @@ const downloadTectonic = (url) => __awaiter(void 0, void 0, void 0, function* ()
     if (!archivePath || !tectonicPath) {
         throw new Error(`Unable to download tectonic from ${url}`);
     }
+    tc.cacheDir(tectonicPath, constants_1.TECTONIC, version);
     return tectonicPath;
 });
 const createPathForAppImage = (appPath) => __awaiter(void 0, void 0, void 0, function* () {
@@ -259,7 +265,7 @@ const setUpTectonic = () => __awaiter(void 0, void 0, void 0, function* () {
         if (!asset) {
             throw new Error(`Tectonic version ${version} not available for ${platform}`);
         }
-        const tectonicPath = yield downloadTectonic(asset.url);
+        const tectonicPath = yield downloadTectonic(asset.url, release.version);
         core.addPath(tectonicPath);
         return release;
     }

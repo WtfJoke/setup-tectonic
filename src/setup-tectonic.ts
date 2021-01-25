@@ -6,6 +6,7 @@ import * as io from '@actions/io'
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
 import {getTectonicRelease, Release} from './release'
+import {TECTONIC} from './constants'
 
 // os in [darwin, linux, win32...] (https://nodejs.org/api/os.html#os_os_platform)
 // return value in [darwin, linux, windows]
@@ -16,12 +17,20 @@ const mapOS = (osKey: string): string => {
   return mappings[osKey] || osKey
 }
 
-const downloadTectonic = async (url: string): Promise<string> => {
+const downloadTectonic = async (
+  url: string,
+  version: string
+): Promise<string> => {
+  let tectonicPath = tc.find(TECTONIC, version)
+  if (tectonicPath) {
+    core.debug(`Found tectonic ${version} in tools cache`)
+    return tectonicPath
+  }
+
   core.debug(`Downloading Tectonic from ${url}`)
   const archivePath = await tc.downloadTool(url)
 
   core.debug('Extracting Tectonic')
-  let tectonicPath = ''
   if (url.endsWith('.zip')) {
     tectonicPath = await tc.extractZip(archivePath)
   } else if (url.endsWith('.tar.gz')) {
@@ -35,6 +44,8 @@ const downloadTectonic = async (url: string): Promise<string> => {
   if (!archivePath || !tectonicPath) {
     throw new Error(`Unable to download tectonic from ${url}`)
   }
+
+  tc.cacheDir(tectonicPath, TECTONIC, version)
 
   return tectonicPath
 }
@@ -77,7 +88,7 @@ export const setUpTectonic = async (): Promise<Release> => {
       )
     }
 
-    const tectonicPath = await downloadTectonic(asset.url)
+    const tectonicPath = await downloadTectonic(asset.url, release.version)
 
     core.addPath(tectonicPath)
 
