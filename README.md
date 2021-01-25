@@ -21,7 +21,7 @@ steps:
 - uses: wtfjoke/setup-tectonic@v1
   with:
     github-token: ${{ secrets.GITHUB_TOKEN }}
-- run: tectonic --version
+- run: tectonic main.tex
 ```
 You can also download a specific version of Tectonic
 ```yml
@@ -30,11 +30,14 @@ steps:
   with:
     github-token: ${{ secrets.GITHUB_TOKEN }}
     tectonic-version: 0.4.0
-- run: tectonic --version
+- run: tectonic main.tex
 ```
 
 ## Upload pdf (using `actions/upload-artifact`)
 ```yml
+name: 'Build LaTex Document'
+on: 
+  push:
 jobs:
   build:
     runs-on: ubuntu-20.04
@@ -54,8 +57,11 @@ jobs:
           path: main.pdf
 ```
 
-## With enabled cache
+## With enabled cache (using `actions/cache`)
 ```yml
+name: 'Build LaTex Document'
+on: 
+  push:
 jobs:
   build:
     runs-on: ubuntu-20.04
