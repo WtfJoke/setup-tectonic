@@ -9,14 +9,14 @@ import {getTectonicRelease, Release} from './release'
 
 // os in [darwin, linux, win32...] (https://nodejs.org/api/os.html#os_os_platform)
 // return value in [darwin, linux, windows]
-function mapOS(osKey: string): string {
+const mapOS = (osKey: string): string => {
   const mappings: {[key: string]: string} = {
     win32: 'windows'
   }
   return mappings[osKey] || osKey
 }
 
-async function downloadTectonic(url: string): Promise<string> {
+const downloadTectonic = async (url: string): Promise<string> => {
   core.debug(`Downloading Tectonic from ${url}`)
   const archivePath = await tc.downloadTool(url)
 
@@ -39,7 +39,7 @@ async function downloadTectonic(url: string): Promise<string> {
   return tectonicPath
 }
 
-async function createPathForAppImage(appPath: string): Promise<string> {
+const createPathForAppImage = async (appPath: string): Promise<string> => {
   const tectonicPath = await createTempFolder(appPath)
   const newAppPath = path.resolve(tectonicPath, 'tectonic')
   await io.mv(appPath, newAppPath)
@@ -52,13 +52,13 @@ async function createPathForAppImage(appPath: string): Promise<string> {
   return tectonicPath
 }
 
-async function createTempFolder(pathToExecutable: string): Promise<string> {
+const createTempFolder = async (pathToExecutable: string): Promise<string> => {
   const destFolder = path.join(path.dirname(pathToExecutable), uuid())
   await io.mkdirP(destFolder)
   return destFolder
 }
 
-export async function setUpTectonic(): Promise<Release> {
+export const setUpTectonic = async (): Promise<Release> => {
   try {
     const githubToken = core.getInput('github-token', {required: true})
     const version = core.getInput('tectonic_version')

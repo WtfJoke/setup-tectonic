@@ -40,10 +40,10 @@ export class Release {
   }
 }
 
-export async function getTectonicRelease(
+export const getTectonicRelease = async (
   githubToken: string,
   version?: string
-): Promise<Release> {
+): Promise<Release> => {
   const octo = getOctokit(githubToken)
 
   if (version) {
@@ -61,7 +61,7 @@ export async function getTectonicRelease(
   return await getLatestRelease(octo)
 }
 
-async function getLatestRelease(octo: GithubOktokit): Promise<Release> {
+const getLatestRelease = async (octo: GithubOktokit): Promise<Release> => {
   const releasesResult = await octo.repos.listReleases({
     owner: constants.REPO_OWNER,
     repo: constants.REPO_NAME
@@ -82,7 +82,7 @@ async function getLatestRelease(octo: GithubOktokit): Promise<Release> {
   }
 }
 
-function asReleaseAsset(assets: GithubReleaseAssets): ReleaseAsset[] {
+const asReleaseAsset = (assets: GithubReleaseAssets): ReleaseAsset[] => {
   return assets.map(ghAsset => ({
     name: ghAsset.name,
     url: ghAsset.browser_download_url

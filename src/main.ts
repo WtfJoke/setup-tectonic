@@ -1,7 +1,7 @@
 import * as core from '@actions/core'
 import {setUpTectonic} from './setup-tectonic'
 
-async function run(): Promise<void> {
+const run = async (): Promise<void> => {
   try {
     await setUpTectonic()
   } catch (error) {

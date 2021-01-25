@@ -52,16 +52,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(2186));
 const setup_tectonic_1 = __nccwpck_require__(6208);
-function run() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            yield setup_tectonic_1.setUpTectonic();
-        }
-        catch (error) {
-            core.setFailed(error.message);
-        }
-    });
-}
+const run = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield setup_tectonic_1.setUpTectonic();
+    }
+    catch (error) {
+        core.setFailed(error.message);
+    }
+});
 run();
 
 
@@ -124,45 +122,41 @@ class Release {
     }
 }
 exports.Release = Release;
-function getTectonicRelease(githubToken, version) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const octo = github_1.getOctokit(githubToken);
-        if (version) {
-            const releaseResult = yield octo.repos.getReleaseByTag({
-                owner: constants.REPO_OWNER,
-                repo: constants.REPO_NAME,
-                tag: constants.RELEASE_TAG_IDENTIFIER + version
-            });
-            if (releaseResult.status === 200) {
-                const { id, tag_name, name, assets } = releaseResult.data;
-                return new Release(id, tag_name, asReleaseAsset(assets), name);
-            }
-        }
-        return yield getLatestRelease(octo);
-    });
-}
-exports.getTectonicRelease = getTectonicRelease;
-function getLatestRelease(octo) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const releasesResult = yield octo.repos.listReleases({
+const getTectonicRelease = (githubToken, version) => __awaiter(void 0, void 0, void 0, function* () {
+    const octo = github_1.getOctokit(githubToken);
+    if (version) {
+        const releaseResult = yield octo.repos.getReleaseByTag({
             owner: constants.REPO_OWNER,
-            repo: constants.REPO_NAME
+            repo: constants.REPO_NAME,
+            tag: constants.RELEASE_TAG_IDENTIFIER + version
         });
-        const releaseData = releasesResult.data.find(release => release.tag_name.startsWith(constants.RELEASE_TAG_IDENTIFIER));
-        if (releaseData) {
-            return new Release(releaseData.id, releaseData.tag_name, asReleaseAsset(releaseData.assets), releaseData.name);
+        if (releaseResult.status === 200) {
+            const { id, tag_name, name, assets } = releaseResult.data;
+            return new Release(id, tag_name, asReleaseAsset(assets), name);
         }
-        else {
-            throw new Error('Couldnt get latest tectonic release');
-        }
+    }
+    return yield getLatestRelease(octo);
+});
+exports.getTectonicRelease = getTectonicRelease;
+const getLatestRelease = (octo) => __awaiter(void 0, void 0, void 0, function* () {
+    const releasesResult = yield octo.repos.listReleases({
+        owner: constants.REPO_OWNER,
+        repo: constants.REPO_NAME
     });
-}
-function asReleaseAsset(assets) {
+    const releaseData = releasesResult.data.find(release => release.tag_name.startsWith(constants.RELEASE_TAG_IDENTIFIER));
+    if (releaseData) {
+        return new Release(releaseData.id, releaseData.tag_name, asReleaseAsset(releaseData.assets), releaseData.name);
+    }
+    else {
+        throw new Error('Couldnt get latest tectonic release');
+    }
+});
+const asReleaseAsset = (assets) => {
     return assets.map(ghAsset => ({
         name: ghAsset.name,
         url: ghAsset.browser_download_url
     }));
-}
+};
 
 
 /***/ }),
@@ -212,76 +206,68 @@ const tc = __importStar(__nccwpck_require__(7784));
 const release_1 = __nccwpck_require__(878);
 // os in [darwin, linux, win32...] (https://nodejs.org/api/os.html#os_os_platform)
 // return value in [darwin, linux, windows]
-function mapOS(osKey) {
+const mapOS = (osKey) => {
     const mappings = {
         win32: 'windows'
     };
     return mappings[osKey] || osKey;
-}
-function downloadTectonic(url) {
-    return __awaiter(this, void 0, void 0, function* () {
-        core.debug(`Downloading Tectonic from ${url}`);
-        const archivePath = yield tc.downloadTool(url);
-        core.debug('Extracting Tectonic');
-        let tectonicPath = '';
-        if (url.endsWith('.zip')) {
-            tectonicPath = yield tc.extractZip(archivePath);
+};
+const downloadTectonic = (url) => __awaiter(void 0, void 0, void 0, function* () {
+    core.debug(`Downloading Tectonic from ${url}`);
+    const archivePath = yield tc.downloadTool(url);
+    core.debug('Extracting Tectonic');
+    let tectonicPath = '';
+    if (url.endsWith('.zip')) {
+        tectonicPath = yield tc.extractZip(archivePath);
+    }
+    else if (url.endsWith('.tar.gz')) {
+        tectonicPath = yield tc.extractTar(archivePath);
+    }
+    else if (url.endsWith('.AppImage')) {
+        tectonicPath = yield createPathForAppImage(archivePath);
+    }
+    core.debug(`Tectonic path is ${tectonicPath}`);
+    if (!archivePath || !tectonicPath) {
+        throw new Error(`Unable to download tectonic from ${url}`);
+    }
+    return tectonicPath;
+});
+const createPathForAppImage = (appPath) => __awaiter(void 0, void 0, void 0, function* () {
+    const tectonicPath = yield createTempFolder(appPath);
+    const newAppPath = path.resolve(tectonicPath, 'tectonic');
+    yield io.mv(appPath, newAppPath);
+    core.debug(`Moved Tectonic from ${appPath} to ${newAppPath}`);
+    // make it executable
+    fs.chmodSync(newAppPath, '755');
+    return tectonicPath;
+});
+const createTempFolder = (pathToExecutable) => __awaiter(void 0, void 0, void 0, function* () {
+    const destFolder = path.join(path.dirname(pathToExecutable), uuid_1.v4());
+    yield io.mkdirP(destFolder);
+    return destFolder;
+});
+const setUpTectonic = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const githubToken = core.getInput('github-token', { required: true });
+        const version = core.getInput('tectonic_version');
+        core.debug(`Finding releases for Tectonic version ${version}`);
+        const release = yield release_1.getTectonicRelease(githubToken, version);
+        const platform = mapOS(os.platform());
+        core.debug(`Getting build for Tectonic version ${release.version}: ${platform}`);
+        core.debug(`Release: ${JSON.stringify(release)}`);
+        const asset = release.getAsset(platform);
+        if (!asset) {
+            throw new Error(`Tectonic version ${version} not available for ${platform}`);
         }
-        else if (url.endsWith('.tar.gz')) {
-            tectonicPath = yield tc.extractTar(archivePath);
-        }
-        else if (url.endsWith('.AppImage')) {
-            tectonicPath = yield createPathForAppImage(archivePath);
-        }
-        core.debug(`Tectonic path is ${tectonicPath}`);
-        if (!archivePath || !tectonicPath) {
-            throw new Error(`Unable to download tectonic from ${url}`);
-        }
-        return tectonicPath;
-    });
-}
-function createPathForAppImage(appPath) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const tectonicPath = yield createTempFolder(appPath);
-        const newAppPath = path.resolve(tectonicPath, 'tectonic');
-        yield io.mv(appPath, newAppPath);
-        core.debug(`Moved Tectonic from ${appPath} to ${newAppPath}`);
-        // make it executable
-        fs.chmodSync(newAppPath, '755');
-        return tectonicPath;
-    });
-}
-function createTempFolder(pathToExecutable) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const destFolder = path.join(path.dirname(pathToExecutable), uuid_1.v4());
-        yield io.mkdirP(destFolder);
-        return destFolder;
-    });
-}
-function setUpTectonic() {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const githubToken = core.getInput('github-token', { required: true });
-            const version = core.getInput('tectonic_version');
-            core.debug(`Finding releases for Tectonic version ${version}`);
-            const release = yield release_1.getTectonicRelease(githubToken, version);
-            const platform = mapOS(os.platform());
-            core.debug(`Getting build for Tectonic version ${release.version}: ${platform}`);
-            core.debug(`Release: ${JSON.stringify(release)}`);
-            const asset = release.getAsset(platform);
-            if (!asset) {
-                throw new Error(`Tectonic version ${version} not available for ${platform}`);
-            }
-            const tectonicPath = yield downloadTectonic(asset.url);
-            core.addPath(tectonicPath);
-            return release;
-        }
-        catch (error) {
-            core.error(error);
-            throw error;
-        }
-    });
-}
+        const tectonicPath = yield downloadTectonic(asset.url);
+        core.addPath(tectonicPath);
+        return release;
+    }
+    catch (error) {
+        core.error(error);
+        throw error;
+    }
+});
 exports.setUpTectonic = setUpTectonic;
 
 
