@@ -2,16 +2,113 @@ require('./sourcemap-register.js');module.exports =
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ 7154:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.buildDownloadURL = exports.downloadBiber = void 0;
+const os = __importStar(__nccwpck_require__(2087));
+const core = __importStar(__nccwpck_require__(2186));
+const tc = __importStar(__nccwpck_require__(7784));
+const constants_1 = __nccwpck_require__(5105);
+const downloadBiber = (biberVersion) => __awaiter(void 0, void 0, void 0, function* () {
+    const validVersion = biberVersion === 'latest' ? 'current' : biberVersion;
+    const platform = os.platform();
+    const fileName = mapOsToFileName(platform);
+    const url = exports.buildDownloadURL(validVersion, fileName, platform);
+    core.debug(`Downloading Biber from ${url}`);
+    const archivePath = yield tc.downloadTool(url);
+    core.debug('Extracting Biber');
+    let biberPath;
+    if (fileName.endsWith('.zip')) {
+        biberPath = yield tc.extractZip(archivePath);
+    }
+    else if (fileName.endsWith('.tar.gz')) {
+        biberPath = yield tc.extractTar(archivePath);
+    }
+    core.debug(`Biber path is ${biberPath}`);
+    if (!archivePath || !biberPath) {
+        throw new Error(`Unable to download biber from ${url}`);
+    }
+    return biberPath;
+});
+exports.downloadBiber = downloadBiber;
+const buildDownloadURL = (version, fileName, platform) => {
+    const osIdentifier = mapOsToIdentifier(platform);
+    const link = [
+        constants_1.BIBER_DL_BASE_PATH,
+        version,
+        constants_1.BINARIES,
+        osIdentifier,
+        fileName,
+        constants_1.DOWNLOAD
+    ].join('/');
+    return link;
+};
+exports.buildDownloadURL = buildDownloadURL;
+const mapOsToIdentifier = (platform) => {
+    const mappings = {
+        win32: 'Windows',
+        darwin: 'OSX_Intel',
+        linux: 'Linux'
+    };
+    return mappings[platform] || platform;
+};
+const mapOsToFileName = (platform) => {
+    const platformFileNames = {
+        win32: 'biber-MSWIN64.zip',
+        darwin: 'biber-darwin_x86_64.tar.gz',
+        linux: 'biber-linux_x86_64.tar.gz'
+    };
+    return platformFileNames[platform];
+};
+
+
+/***/ }),
+
 /***/ 5105:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.TECTONIC = exports.REPO_OWNER = exports.RELEASE_TAG_IDENTIFIER = void 0;
+exports.DOWNLOAD = exports.BINARIES = exports.BIBER_DL_BASE_PATH = exports.TECTONIC = exports.REPO_OWNER = exports.RELEASE_TAG_IDENTIFIER = void 0;
 exports.RELEASE_TAG_IDENTIFIER = 'tectonic@';
 exports.REPO_OWNER = 'tectonic-typesetting';
 exports.TECTONIC = 'tectonic';
+exports.BIBER_DL_BASE_PATH = 'https://sourceforge.net/projects/biblatex-biber/files/biblatex-biber';
+exports.BINARIES = 'binaries';
+exports.DOWNLOAD = 'download';
 
 
 /***/ }),
@@ -124,7 +221,7 @@ class Release {
 exports.Release = Release;
 const getTectonicRelease = (githubToken, version) => __awaiter(void 0, void 0, void 0, function* () {
     const octo = github_1.getOctokit(githubToken);
-    if (version) {
+    if (version && version !== 'latest') {
         const releaseResult = yield octo.repos.getReleaseByTag({
             owner: constants.REPO_OWNER,
             repo: constants.TECTONIC,
@@ -204,6 +301,7 @@ const io = __importStar(__nccwpck_require__(7436));
 const core = __importStar(__nccwpck_require__(2186));
 const tc = __importStar(__nccwpck_require__(7784));
 const release_1 = __nccwpck_require__(878);
+const biber_1 = __nccwpck_require__(7154);
 // os in [darwin, linux, win32...] (https://nodejs.org/api/os.html#os_os_platform)
 // return value in [darwin, linux, windows]
 const mapOS = (osKey) => {
@@ -249,7 +347,9 @@ const createTempFolder = (pathToExecutable) => __awaiter(void 0, void 0, void 0,
 const setUpTectonic = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const githubToken = core.getInput('github-token', { required: true });
-        const version = core.getInput('tectonic_version');
+        const version = core.getInput('tectonic-version');
+        const biberVersion = core.getInput('biber-version');
+        core.debug(`Biber version: ${biberVersion}`);
         core.debug(`Finding releases for Tectonic version ${version}`);
         const release = yield release_1.getTectonicRelease(githubToken, version);
         const platform = mapOS(os.platform());
@@ -261,6 +361,11 @@ const setUpTectonic = () => __awaiter(void 0, void 0, void 0, function* () {
         }
         const tectonicPath = yield downloadTectonic(asset.url);
         core.addPath(tectonicPath);
+        if (biberVersion) {
+            // optionally download biber
+            const biberPath = yield biber_1.downloadBiber(biberVersion);
+            core.addPath(biberPath);
+        }
         return release;
     }
     catch (error) {

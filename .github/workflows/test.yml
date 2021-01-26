@@ -22,5 +22,8 @@ jobs:
       - uses: ./
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          biber-version: "latest"
       - name: Tectonic version
         run: tectonic --version
+      - name: Biber version
+        run: biber --version

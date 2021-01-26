@@ -6,6 +6,7 @@ import * as io from '@actions/io'
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
 import {getTectonicRelease, Release} from './release'
+import {downloadBiber} from './biber'
 
 // os in [darwin, linux, win32...] (https://nodejs.org/api/os.html#os_os_platform)
 // return value in [darwin, linux, windows]
@@ -61,7 +62,9 @@ const createTempFolder = async (pathToExecutable: string): Promise<string> => {
 export const setUpTectonic = async (): Promise<Release> => {
   try {
     const githubToken = core.getInput('github-token', {required: true})
-    const version = core.getInput('tectonic_version')
+    const version = core.getInput('tectonic-version')
+    const biberVersion = core.getInput('biber-version')
+    core.debug(`Biber version: ${biberVersion}`)
 
     core.debug(`Finding releases for Tectonic version ${version}`)
     const release = await getTectonicRelease(githubToken, version)
@@ -80,6 +83,12 @@ export const setUpTectonic = async (): Promise<Release> => {
     const tectonicPath = await downloadTectonic(asset.url)
 
     core.addPath(tectonicPath)
+
+    if (biberVersion) {
+      // optionally download biber
+      const biberPath = await downloadBiber(biberVersion)
+      core.addPath(biberPath)
+    }
 
     return release
   } catch (error) {

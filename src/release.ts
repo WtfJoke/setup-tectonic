@@ -46,7 +46,7 @@ export const getTectonicRelease = async (
 ): Promise<Release> => {
   const octo = getOctokit(githubToken)
 
-  if (version) {
+  if (version && version !== 'latest') {
     const releaseResult = await octo.repos.getReleaseByTag({
       owner: constants.REPO_OWNER,
       repo: constants.TECTONIC,

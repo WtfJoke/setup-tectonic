@@ -10,6 +10,9 @@ inputs:
     required: false
     description: 'The version of tectonic to install. A value of `latest` will install the latest version of tectonic. Defaults to `latest`.'
     default: 'latest'
+  biber-version: 
+    required: false
+    description: 'The version of biber to install. A value of `latest` will install the latest version of biber.'
   
 runs:
   using: 'node12'
