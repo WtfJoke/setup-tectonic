@@ -1,6 +1,7 @@
 import {getOctokit} from '@actions/github'
 
 import * as constants from './constants'
+import {valid} from 'semver'
 import {GithubReleaseAssets, GithubOktokit} from './githubTypes'
 
 interface ReleaseAsset {
@@ -45,12 +46,13 @@ export const getTectonicRelease = async (
   version?: string
 ): Promise<Release> => {
   const octo = getOctokit(githubToken)
+  const validVersion = valid(version)
 
-  if (version && version !== 'latest') {
+  if (validVersion) {
     const releaseResult = await octo.repos.getReleaseByTag({
       owner: constants.REPO_OWNER,
       repo: constants.TECTONIC,
-      tag: constants.RELEASE_TAG_IDENTIFIER + version
+      tag: constants.RELEASE_TAG_IDENTIFIER + validVersion
     })
     if (releaseResult.status === 200) {
       const {id, tag_name, name, assets} = releaseResult.data

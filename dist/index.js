@@ -199,6 +199,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getTectonicRelease = exports.Release = void 0;
 const github_1 = __nccwpck_require__(5438);
 const constants = __importStar(__nccwpck_require__(5105));
+const semver_1 = __nccwpck_require__(5911);
 class Release {
     constructor(id, tagName, assets, name) {
         this.id = id;
@@ -221,11 +222,12 @@ class Release {
 exports.Release = Release;
 const getTectonicRelease = (githubToken, version) => __awaiter(void 0, void 0, void 0, function* () {
     const octo = github_1.getOctokit(githubToken);
-    if (version && version !== 'latest') {
+    const validVersion = semver_1.valid(version);
+    if (validVersion) {
         const releaseResult = yield octo.repos.getReleaseByTag({
             owner: constants.REPO_OWNER,
             repo: constants.TECTONIC,
-            tag: constants.RELEASE_TAG_IDENTIFIER + version
+            tag: constants.RELEASE_TAG_IDENTIFIER + validVersion
         });
         if (releaseResult.status === 200) {
             const { id, tag_name, name, assets } = releaseResult.data;
