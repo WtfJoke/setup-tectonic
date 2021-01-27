@@ -29,7 +29,7 @@
     "@actions/github": "^4.0.0",
     "@actions/io": "^1.0.2",
     "@actions/tool-cache": "^1.6.1",
-    "semver": "^6.3.0",
+    "semver": "^7.3.4",
     "uuidv4": "^6.2.6"
   },
   "devDependencies": {
