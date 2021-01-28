@@ -2,9 +2,10 @@ import * as os from 'os'
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
 import {BIBER_DL_BASE_PATH, BINARIES, DOWNLOAD} from './constants'
+import {valid} from 'semver'
 
 export const downloadBiber = async (biberVersion: string): Promise<string> => {
-  const validVersion = biberVersion === 'latest' ? 'current' : biberVersion
+  const validVersion = valid(biberVersion) || 'current'
   const platform = os.platform()
   const fileName = mapOsToFileName(platform)
   const url = buildDownloadURL(validVersion, fileName, platform)
