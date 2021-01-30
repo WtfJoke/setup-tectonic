@@ -17,6 +17,8 @@ The default configuration installs the latest version of Tectonic. The `GITHUB_T
 
 You can even use caching (see example below) to speed up your workflow :tada:.
 
+See [action.yml](https://github.com/WtfJoke/setup-tectonic/blob/main/action.yml) for a full description of all parameters.
+
 ```yml
 steps:
 - uses: wtfjoke/setup-tectonic@v1
@@ -137,3 +139,18 @@ jobs:
           name: main
           path: main.pdf
 ```
+
+## Comparison to other LaTeX/Tectonic actions like [vinay0410/tectonic-action](https://github.com/vinay0410/tectonic-action)
+
+
+This action was created because all existing Github Actions for compiling LaTeX documents I came accross are docker based actions, which are [slower than Javascript based actions](https://docs.github.com/en/actions/creating-actions/about-actions#docker-container-actions).
+
+LaTex Docker images tend to be huge (2gb+). Tectonic images are an exception but they need to be maintained and updated with new Tectonic versions. This is not often the case, at the time of writing [my docker image](https://github.com/WtfJoke/tectonic-docker) is the only one up to date with the latest tectonic version.
+
+In comparsion this github action doesnt need an update if a new release of tectonic is released, it just works.
+
+The existing github actions doesnt support biber (notable exception: [birjolaxew/tectonic-biber-action](https://github.com/birjolaxew/tectonic-biber-action)).
+
+Additionaly most of the github actions tend to do too much or are too strict. 
+
+This github action has one job, to setup tectonic (and optionally biber). You can choose on your own how you want to call tectonic, how and if you want to cache your dependencies, how and if you want to upload your pdf. Depending on your decisions you can choose the best action to do the corresponding job (eg. [actions/cache](https://github.com/actions/cache) for caching, [actions/upload-artifact](https://github.com/actions/upload-artifact) or [actions/create-release](https://github.com/actions/create-release) for publihsing your pdf)
