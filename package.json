@@ -12,7 +12,7 @@
     "package": "ncc build --source-map --license licenses.txt",
     "test": "jest",
     "coverage": "jest --collectCoverage",
-    "all": "npm run build && npm run format && npm run lint && npm run package && npm test"
+    "all": "yarn run build && yarn run format && yarn run lint && yarn run package && yarn test"
   },
   "repository": {
     "type": "git",
@@ -48,7 +48,7 @@
     "jest-circus": "^26.6.3",
     "js-yaml": "^4.0.0",
     "prettier": "2.2.1",
-    "ts-jest": "^26.4.4",
+    "ts-jest": "^26.5.0",
     "typescript": "^4.1.3"
   }
 }
