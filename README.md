@@ -143,10 +143,10 @@ jobs:
 ## Comparison to other LaTeX/Tectonic actions like [vinay0410/tectonic-action](https://github.com/vinay0410/tectonic-action)
 
 | Pro                       | Description                                                               |
-| --------------------------|:--------------------------------------------------------------------------|
-| :zap: Performance         | Native Javascript Action's are faster than docker (:whale:) based actions |
-| :robot:  Future proofed   | New tectonic versions right on release without code changes               |
-| :art: Customizability     | Do one thing and do it well - let other actions do what they can do best  | 
+| --------------------------|:--------------------------------------------------------------------------------------------|
+| :zap: Performance         | - Supports caching </br> - Native Javascript Action's are faster than docker (:whale:) based actions  |
+| :robot:  Future proofed   | New tectonic versions right on release without code changes                                 |
+| :art: Customizability     | Do one thing and do it well - let other actions do what they can do best                    | 
 </br>
 
 ### Explaination
