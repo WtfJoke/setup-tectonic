@@ -80,14 +80,12 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-      - name: Export Tectonic cache path
-        run: echo TECTONIC_CACHE_PATH=$HOME/.cache/Tectonic >> $GITHUB_ENV
       - name: Checkout
         uses: actions/checkout@v2
       - uses: actions/cache@v2
         name: Tectonic Cache
         with:
-          path: ${{ env.TECTONIC_CACHE_PATH }}
+          path: ~/.cache/Tectonic
           key: ${{ runner.os }}-tectonic-${{ hashFiles('**/*.tex') }}
           restore-keys: |
            ${{ runner.os }}-tectonic-
@@ -113,14 +111,12 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-      - name: Export Tectonic cache path
-        run: echo TECTONIC_CACHE_PATH=$HOME/.cache/Tectonic >> $GITHUB_ENV
       - name: Checkout
         uses: actions/checkout@v2
       - uses: actions/cache@v2
         name: Tectonic Cache
         with:
-          path: ${{ env.TECTONIC_CACHE_PATH }}
+          path: ~/.cache/Tectonic
           key: ${{ runner.os }}-tectonic-${{ hashFiles('**/*.tex') }}
           restore-keys: |
            ${{ runner.os }}-tectonic-
@@ -174,7 +170,7 @@ For tectonic the cache directories (`path`) are as follows (see also [tectonic-t
 
 | OS      | Cache-Directory | Run-Command to export it as environment variable
 | ----------- | ----------------------------- | --------------------------------------------|
-| Linux      | `$HOME/.cache/Tectonic`       | `echo TECTONIC_CACHE_PATH=$HOME/.cache/Tectonic >> $GITHUB_ENV`
+| Linux      | `~/.cache/Tectonic`       | `echo TECTONIC_CACHE_PATH=~/.cache/Tectonic >> $GITHUB_ENV`
 | Mac   | `~/Library/Caches/Tectonic`        | `echo TECTONIC_CACHE_PATH=~/Library/Caches/Tectonic >> $GITHUB_ENV`
 | Windows   | `%LOCALAPPDATA%\TectonicProject\Tectonic` | <code>echo TECTONIC_CACHE_PATH=$env:LOCALAPPDATA\TectonicProject\Tectonic | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append`</code>
 
