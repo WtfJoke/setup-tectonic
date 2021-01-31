@@ -176,7 +176,7 @@ For tectonic the cache directories (`path`) are as follows (see also [tectonic-t
 | ----------- | ----------------------------- | --------------------------------------------|
 | Linux      | `$HOME/.cache/Tectonic`       | `echo TECTONIC_CACHE_PATH=$HOME/.cache/Tectonic >> $GITHUB_ENV`
 | Mac   | `~/Library/Caches/Tectonic`        | `echo TECTONIC_CACHE_PATH=~/Library/Caches/Tectonic >> $GITHUB_ENV`
-| Windows   | `%LOCALAPPDATA%\TectonicProject\Tectonic` | `echo TECTONIC_CACHE_PATH=$env:LOCALAPPDATA\TectonicProject\Tectonic | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append`
+| Windows   | `%LOCALAPPDATA%\TectonicProject\Tectonic` | <code>echo TECTONIC_CACHE_PATH=$env:LOCALAPPDATA\TectonicProject\Tectonic | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append`</code>
 
 ### Key
 By calculate the hash all .tex files (see `hashFiles('**/*.tex')`) and integrate that into the cache-`key` we can make sure, that another execution of tectonic wont change the result. 
