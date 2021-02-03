@@ -65,12 +65,11 @@ const downloadBiber = (biberVersion) => __awaiter(void 0, void 0, void 0, functi
 });
 exports.downloadBiber = downloadBiber;
 const buildDownloadURL = (version, fileName, platform) => {
-    const osIdentifier = mapOsToIdentifier(platform);
     const link = [
         constants_1.BIBER_DL_BASE_PATH,
         version,
         constants_1.BINARIES,
-        osIdentifier,
+        mapOsToIdentifier(platform),
         fileName,
         constants_1.DOWNLOAD
     ].join('/');
@@ -168,25 +167,6 @@ run();
 
 "use strict";
 
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -199,13 +179,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getTectonicRelease = exports.Release = void 0;
 const github_1 = __nccwpck_require__(5438);
-const constants = __importStar(__nccwpck_require__(5105));
+const constants_1 = __nccwpck_require__(5105);
 const semver_1 = __nccwpck_require__(1383);
 class Release {
     constructor(id, tagName, assets, name) {
         this.id = id;
         this.name = name;
-        this.version = tagName.replace(constants.RELEASE_TAG_IDENTIFIER, '');
+        this.version = tagName.replace(constants_1.RELEASE_TAG_IDENTIFIER, '');
         this.tagName = tagName;
         this.assets = assets;
     }
@@ -225,13 +205,13 @@ const getTectonicRelease = (githubToken, version) => __awaiter(void 0, void 0, v
     const octo = github_1.getOctokit(githubToken);
     const validVersion = semver_1.valid(version);
     if (validVersion) {
-        const releaseResult = yield octo.repos.getReleaseByTag({
-            owner: constants.REPO_OWNER,
-            repo: constants.TECTONIC,
-            tag: constants.RELEASE_TAG_IDENTIFIER + validVersion
+        const { data: releaseData, status } = yield octo.repos.getReleaseByTag({
+            owner: constants_1.REPO_OWNER,
+            repo: constants_1.TECTONIC,
+            tag: `${constants_1.RELEASE_TAG_IDENTIFIER}${validVersion}`
         });
-        if (releaseResult.status === 200) {
-            const { id, tag_name, name, assets } = releaseResult.data;
+        if (status === 200) {
+            const { id, tag_name, name, assets } = releaseData;
             return new Release(id, tag_name, asReleaseAsset(assets), name);
         }
     }
@@ -239,13 +219,13 @@ const getTectonicRelease = (githubToken, version) => __awaiter(void 0, void 0, v
 });
 exports.getTectonicRelease = getTectonicRelease;
 const getLatestRelease = (octo) => __awaiter(void 0, void 0, void 0, function* () {
-    const releasesResult = yield octo.repos.listReleases({
-        owner: constants.REPO_OWNER,
-        repo: constants.TECTONIC
+    const releases = yield octo.repos.listReleases({
+        owner: constants_1.REPO_OWNER,
+        repo: constants_1.TECTONIC
     });
-    const releaseData = releasesResult.data.find(release => release.tag_name.startsWith(constants.RELEASE_TAG_IDENTIFIER));
-    if (releaseData) {
-        return new Release(releaseData.id, releaseData.tag_name, asReleaseAsset(releaseData.assets), releaseData.name);
+    const release = releases.data.find(currentRelease => currentRelease.tag_name.startsWith(constants_1.RELEASE_TAG_IDENTIFIER));
+    if (release) {
+        return new Release(release.id, release.tag_name, asReleaseAsset(release.assets), release.name);
     }
     else {
         throw new Error('Couldnt get latest tectonic release');
@@ -305,8 +285,6 @@ const core = __importStar(__nccwpck_require__(2186));
 const tc = __importStar(__nccwpck_require__(7784));
 const release_1 = __nccwpck_require__(878);
 const biber_1 = __nccwpck_require__(7154);
-// os in [darwin, linux, win32...] (https://nodejs.org/api/os.html#os_os_platform)
-// return value in [darwin, linux, windows]
 const mapOS = (osKey) => {
     const mappings = {
         win32: 'windows'

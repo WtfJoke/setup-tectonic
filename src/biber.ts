@@ -4,7 +4,7 @@ import * as tc from '@actions/tool-cache'
 import {BIBER_DL_BASE_PATH, BINARIES, DOWNLOAD} from './constants'
 import {valid} from 'semver'
 
-export const downloadBiber = async (biberVersion: string): Promise<string> => {
+export const downloadBiber = async (biberVersion: string) => {
   const validVersion = valid(biberVersion) || 'current'
   const platform = os.platform()
   const fileName = mapOsToFileName(platform)
@@ -33,14 +33,12 @@ export const buildDownloadURL = (
   version: string,
   fileName: string,
   platform: string
-): string => {
-  const osIdentifier = mapOsToIdentifier(platform)
-
+) => {
   const link = [
     BIBER_DL_BASE_PATH,
     version,
     BINARIES,
-    osIdentifier,
+    mapOsToIdentifier(platform),
     fileName,
     DOWNLOAD
   ].join('/')
@@ -48,8 +46,8 @@ export const buildDownloadURL = (
   return link
 }
 
-const mapOsToIdentifier = (platform: string): string => {
-  const mappings: {[key: string]: string} = {
+const mapOsToIdentifier = (platform: string) => {
+  const mappings: Record<string, string> = {
     win32: 'Windows',
     darwin: 'OSX_Intel',
     linux: 'Linux'
@@ -57,7 +55,7 @@ const mapOsToIdentifier = (platform: string): string => {
   return mappings[platform] || platform
 }
 
-const mapOsToFileName = (platform: string): string => {
+const mapOsToFileName = (platform: string) => {
   const platformFileNames: Record<string, string> = {
     win32: 'biber-MSWIN64.zip',
     darwin: 'biber-darwin_x86_64.tar.gz',

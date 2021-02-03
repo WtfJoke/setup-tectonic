@@ -5,19 +5,17 @@ import {v4 as uuid} from 'uuid'
 import * as io from '@actions/io'
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
-import {getTectonicRelease, Release} from './release'
+import {getTectonicRelease} from './release'
 import {downloadBiber} from './biber'
 
-// os in [darwin, linux, win32...] (https://nodejs.org/api/os.html#os_os_platform)
-// return value in [darwin, linux, windows]
-const mapOS = (osKey: string): string => {
-  const mappings: {[key: string]: string} = {
+const mapOS = (osKey: string) => {
+  const mappings: Record<string, string> = {
     win32: 'windows'
   }
   return mappings[osKey] || osKey
 }
 
-const downloadTectonic = async (url: string): Promise<string> => {
+const downloadTectonic = async (url: string) => {
   core.debug(`Downloading Tectonic from ${url}`)
   const archivePath = await tc.downloadTool(url)
 
@@ -40,7 +38,7 @@ const downloadTectonic = async (url: string): Promise<string> => {
   return tectonicPath
 }
 
-const createPathForAppImage = async (appPath: string): Promise<string> => {
+const createPathForAppImage = async (appPath: string) => {
   const tectonicPath = await createTempFolder(appPath)
   const newAppPath = path.resolve(tectonicPath, 'tectonic')
   await io.mv(appPath, newAppPath)
@@ -53,13 +51,13 @@ const createPathForAppImage = async (appPath: string): Promise<string> => {
   return tectonicPath
 }
 
-const createTempFolder = async (pathToExecutable: string): Promise<string> => {
+const createTempFolder = async (pathToExecutable: string) => {
   const destFolder = path.join(path.dirname(pathToExecutable), uuid())
   await io.mkdirP(destFolder)
   return destFolder
 }
 
-export const setUpTectonic = async (): Promise<Release> => {
+export const setUpTectonic = async () => {
   try {
     const githubToken = core.getInput('github-token', {required: true})
     const version = core.getInput('tectonic-version')

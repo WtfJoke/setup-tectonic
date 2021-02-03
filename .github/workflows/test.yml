@@ -11,7 +11,7 @@ jobs:
       - run: |
           yarn install
       - run: |
-          yarn run all
+          yarn all
   test: # make sure the action works on a clean machine without building
     strategy:
       matrix:

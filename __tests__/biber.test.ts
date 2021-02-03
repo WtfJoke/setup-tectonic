@@ -21,7 +21,7 @@ test('download specific biber version', async () => {
 
   expect(fs.existsSync(biberPath)).toBe(true)
   expect(fs.existsSync(expectedBinaryPath)).toBe(true)
-}, 8000)
+}, 20000)
 
 test('download invalid biber version, should install current', async () => {
   const biberPath = await downloadBiber('invalidVersion')
@@ -30,4 +30,4 @@ test('download invalid biber version, should install current', async () => {
 
   expect(fs.existsSync(biberPath)).toBe(true)
   expect(fs.existsSync(expectedBinaryPath)).toBe(true)
-}, 8000)
+}, 20000)

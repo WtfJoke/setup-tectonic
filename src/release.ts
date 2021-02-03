@@ -1,6 +1,6 @@
 import {getOctokit} from '@actions/github'
 
-import * as constants from './constants'
+import {RELEASE_TAG_IDENTIFIER, TECTONIC, REPO_OWNER} from './constants'
 import {valid} from 'semver'
 import {GithubReleaseAssets, GithubOktokit} from './githubTypes'
 
@@ -24,7 +24,7 @@ export class Release {
   ) {
     this.id = id
     this.name = name
-    this.version = tagName.replace(constants.RELEASE_TAG_IDENTIFIER, '')
+    this.version = tagName.replace(RELEASE_TAG_IDENTIFIER, '')
     this.tagName = tagName
     this.assets = assets
   }
@@ -44,18 +44,18 @@ export class Release {
 export const getTectonicRelease = async (
   githubToken: string,
   version?: string
-): Promise<Release> => {
+) => {
   const octo = getOctokit(githubToken)
   const validVersion = valid(version)
 
   if (validVersion) {
-    const releaseResult = await octo.repos.getReleaseByTag({
-      owner: constants.REPO_OWNER,
-      repo: constants.TECTONIC,
-      tag: constants.RELEASE_TAG_IDENTIFIER + validVersion
+    const {data: releaseData, status} = await octo.repos.getReleaseByTag({
+      owner: REPO_OWNER,
+      repo: TECTONIC,
+      tag: `${RELEASE_TAG_IDENTIFIER}${validVersion}`
     })
-    if (releaseResult.status === 200) {
-      const {id, tag_name, name, assets} = releaseResult.data
+    if (status === 200) {
+      const {id, tag_name, name, assets} = releaseData
 
       return new Release(id, tag_name, asReleaseAsset(assets), name)
     }
@@ -63,21 +63,21 @@ export const getTectonicRelease = async (
   return await getLatestRelease(octo)
 }
 
-const getLatestRelease = async (octo: GithubOktokit): Promise<Release> => {
-  const releasesResult = await octo.repos.listReleases({
-    owner: constants.REPO_OWNER,
-    repo: constants.TECTONIC
+const getLatestRelease = async (octo: GithubOktokit) => {
+  const releases = await octo.repos.listReleases({
+    owner: REPO_OWNER,
+    repo: TECTONIC
   })
-  const releaseData = releasesResult.data.find(release =>
-    release.tag_name.startsWith(constants.RELEASE_TAG_IDENTIFIER)
+  const release = releases.data.find(currentRelease =>
+    currentRelease.tag_name.startsWith(RELEASE_TAG_IDENTIFIER)
   )
 
-  if (releaseData) {
+  if (release) {
     return new Release(
-      releaseData.id,
-      releaseData.tag_name,
-      asReleaseAsset(releaseData.assets),
-      releaseData.name
+      release.id,
+      release.tag_name,
+      asReleaseAsset(release.assets),
+      release.name
     )
   } else {
     throw new Error('Couldnt get latest tectonic release')
