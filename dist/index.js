@@ -330,7 +330,6 @@ const setUpTectonic = () => __awaiter(void 0, void 0, void 0, function* () {
         const githubToken = core.getInput('github-token', { required: true });
         const version = core.getInput('tectonic-version');
         const biberVersion = core.getInput('biber-version');
-        core.debug(`Biber version: ${biberVersion}`);
         core.debug(`Finding releases for Tectonic version ${version}`);
         const release = yield release_1.getTectonicRelease(githubToken, version);
         const platform = mapOS(os.platform());
@@ -344,6 +343,7 @@ const setUpTectonic = () => __awaiter(void 0, void 0, void 0, function* () {
         core.addPath(tectonicPath);
         if (biberVersion) {
             // optionally download biber
+            core.debug(`Biber version: ${biberVersion}`);
             const biberPath = yield biber_1.downloadBiber(biberVersion);
             core.addPath(biberPath);
         }

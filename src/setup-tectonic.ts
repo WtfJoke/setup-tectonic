@@ -62,7 +62,6 @@ export const setUpTectonic = async () => {
     const githubToken = core.getInput('github-token', {required: true})
     const version = core.getInput('tectonic-version')
     const biberVersion = core.getInput('biber-version')
-    core.debug(`Biber version: ${biberVersion}`)
 
     core.debug(`Finding releases for Tectonic version ${version}`)
     const release = await getTectonicRelease(githubToken, version)
@@ -84,6 +83,7 @@ export const setUpTectonic = async () => {
 
     if (biberVersion) {
       // optionally download biber
+      core.debug(`Biber version: ${biberVersion}`)
       const biberPath = await downloadBiber(biberVersion)
       core.addPath(biberPath)
     }
