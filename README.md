@@ -1,5 +1,5 @@
 <p align="left">
-  <a href="https://github.com/actions/typescript-action/actions">
+  <a href="https://github.com/WtfJoke/setup-tectonic/actions">
     <img alt="CI" src="https://github.com/WtfJoke/setup-tectonic/workflows/CI/badge.svg">
   </a>
 </p>
