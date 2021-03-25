@@ -11,7 +11,7 @@ The `wtfjoke/setup-tectonic` action is a JavaScript action that sets up Tectonic
 
 # Usage
 
-This action can be run on `ubuntu-20.04` (not on `ubuntu-latest` / `ubuntu-18.04`), `windows-latest`, and `macos-latest` GitHub Actions runners.
+This action can be run on `ubuntu-latest`, `windows-latest`, and `macos-latest` GitHub Actions runners (not on `ubuntu-18.04`).
 
 The default configuration installs the latest version of Tectonic. The `GITHUB_TOKEN` is needed to query the Github Releases of `tectonic-typesetting/tectonic` to download tectonic.
 
@@ -53,7 +53,7 @@ on:
   push:
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
@@ -77,7 +77,7 @@ on:
   push:
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
@@ -108,7 +108,7 @@ on:
   push:
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
