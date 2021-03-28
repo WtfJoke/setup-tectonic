@@ -9,7 +9,7 @@ The `wtfjoke/setup-tectonic` action is a JavaScript action that sets up Tectonic
 - Downloading a requested version of Tectonic and adding it to the `PATH`.
 - (Optionally) downloading a requested version of Biber and adding it to the `PATH`.
 
-# Usage
+# :wrench: Usage
 
 This action can be run on `ubuntu-latest`, `windows-latest`, and `macos-latest` GitHub Actions runners (not on `ubuntu-18.04`).
 
@@ -136,7 +136,7 @@ jobs:
           path: main.pdf
 ```
 
-# Comparison to other LaTeX/Tectonic actions like [vinay0410/tectonic-action](https://github.com/vinay0410/tectonic-action)
+# 📊 Comparison to other LaTeX/Tectonic actions like [vinay0410/tectonic-action](https://github.com/vinay0410/tectonic-action)
 
 | Pro                       | Description                                                               |
 | --------------------------|:--------------------------------------------------------------------------------------------|
@@ -159,7 +159,7 @@ Additionaly most of the github actions tend to do too much or are too strict.
 This github action has one job, to setup tectonic (and optionally biber). You can choose on your own how you want to call tectonic, how and if you want to cache your dependencies, how and if you want to upload your pdf. Depending on your decisions you can choose the best action to do the corresponding job (eg. [actions/cache](https://github.com/actions/cache) for caching, [actions/upload-artifact](https://github.com/actions/upload-artifact) or [actions/create-release](https://github.com/actions/create-release) for publihsing your pdf)
 
 
-# How does the cache works?
+# 🤓 How does the cache works?
 The official cache action [actions/cache](https://github.com/actions/cache) has three parameters:
 - `path` - A list of files, directories, and wildcard patterns to cache and restore. 
 - `key` - Primary cache key - If the key has a cache-hit, it means the cache is up to date. The execution of a tool shouldnt change the cache anymore.
