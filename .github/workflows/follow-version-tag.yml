@@ -1,0 +1,18 @@
+name: 'On Release'
+on:
+  release:
+    types: [published]
+
+jobs:
+  update-tag:
+    name: 'Update major version tag to latest version'
+    runs-on: ubuntu-latest
+    env:
+      TAG_NAME: ${{github.event.release.tag_name}}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Update major version tag
+        run: |
+          major=`echo $TAG_NAME | cut -d. -f1`
+          git tag $major
+          git push -f origin $major
