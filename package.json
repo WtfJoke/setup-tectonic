@@ -39,7 +39,7 @@
     "@types/node": "^15.6.1",
     "@types/semver": "^7.3.6",
     "@types/uuid": "^8.3.0",
-    "@typescript-eslint/parser": "^4.26.0",
+    "@typescript-eslint/parser": "^4.28.1",
     "@vercel/ncc": "^0.28.6",
     "eslint": "^7.27.0",
     "eslint-plugin-github": "^4.1.3",
