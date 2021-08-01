@@ -36,7 +36,7 @@
   "devDependencies": {
     "@octokit/types": "^6.18.1",
     "@types/jest": "^26.0.23",
-    "@types/node": "^16.0.0",
+    "@types/node": "^16.4.9",
     "@types/semver": "^7.3.6",
     "@types/uuid": "^8.3.1",
     "@typescript-eslint/parser": "^4.28.2",
