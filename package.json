@@ -37,7 +37,7 @@
     "@octokit/types": "^6.18.1",
     "@types/jest": "^26.0.23",
     "@types/node": "^16.0.0",
-    "@types/semver": "^7.3.6",
+    "@types/semver": "^7.3.8",
     "@types/uuid": "^8.3.1",
     "@typescript-eslint/parser": "^4.28.2",
     "@vercel/ncc": "^0.28.6",
