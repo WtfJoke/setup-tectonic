@@ -4,14 +4,14 @@
   </a>
 </p>
 
-The `wtfjoke/setup-tectonic` action is a JavaScript action that sets up Tectonic in your GitHub Actions workflow by:
+The `wtfjoke/setup-tectonic` action is a JavaScript action that sets up [Tectonic](https://github.com/tectonic-typesetting/tectonic) in your GitHub Actions workflow by:
 
 - Downloading a requested version of Tectonic and adding it to the `PATH`.
 - (Optionally) downloading a requested version of Biber and adding it to the `PATH`.
 
 # :wrench: Usage
 
-This action can be run on `ubuntu-latest`, `windows-latest`, and `macos-latest` GitHub Actions runners (not on `ubuntu-18.04`).
+This action can be run on `ubuntu-latest`, `windows-latest`, and `macos-latest` GitHub Actions runners.
 
 The default configuration installs the latest version of Tectonic. The `GITHUB_TOKEN` is needed to query the Github Releases of `tectonic-typesetting/tectonic` to download tectonic.
 
@@ -32,7 +32,7 @@ steps:
 - uses: wtfjoke/setup-tectonic@v1
   with:
     github-token: ${{ secrets.GITHUB_TOKEN }}
-    tectonic-version: 0.4.0
+    tectonic-version: 0.7.1
 - run: tectonic main.tex
 ```
 
@@ -146,11 +146,11 @@ jobs:
 </br>
 
 ## Explanation
-This action was created because all existing Github Actions for compiling LaTeX documents I came accross are docker based actions, which are [slower than Javascript based actions](https://docs.github.com/en/actions/creating-actions/about-actions#docker-container-actions).
+This action was created because all existing Github Actions for compiling LaTeX documents I came across are docker based actions, which are [slower than Javascript based actions](https://docs.github.com/en/actions/creating-actions/about-actions#docker-container-actions).
 
 LaTex Docker images tend to be huge (2gb+). Tectonic images are an exception but they need to be maintained and updated with new Tectonic versions. This is not often the case, at the time of writing [my docker image](https://github.com/WtfJoke/tectonic-docker) is the only one up to date with the latest tectonic version.
 
-In comparsion this github action doesnt need an update if a new release of tectonic is released, it just works.
+In comparsion, this github action doesnt need an update if a new release of tectonic is released, it just works.
 
 The existing github actions doesnt support biber (notable exception: [birjolaxew/tectonic-biber-action](https://github.com/birjolaxew/tectonic-biber-action)).
 
