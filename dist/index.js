@@ -313,7 +313,7 @@ const createPathForAppImage = (appPath) => __awaiter(void 0, void 0, void 0, fun
     yield io.mv(appPath, newAppPath);
     core.debug(`Moved Tectonic from ${appPath} to ${newAppPath}`);
     // make it executable
-    fs.chmodSync(newAppPath, '755');
+    fs.chmodSync(newAppPath, '750');
     return tectonicPath;
 });
 const createTempFolder = (pathToExecutable) => __awaiter(void 0, void 0, void 0, function* () {
