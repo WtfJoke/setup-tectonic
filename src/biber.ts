@@ -33,8 +33,8 @@ export const buildDownloadURL = (
   version: string,
   fileName: string,
   platform: string
-) => {
-  const link = [
+) =>
+  [
     BIBER_DL_BASE_PATH,
     version,
     BINARIES,
@@ -42,9 +42,6 @@ export const buildDownloadURL = (
     fileName,
     DOWNLOAD
   ].join('/')
-
-  return link
-}
 
 const mapOsToIdentifier = (platform: string) => {
   const mappings: Record<string, string> = {
