@@ -60,7 +60,7 @@ export const getTectonicRelease = async (
       return new Release(id, tag_name, asReleaseAsset(assets), name)
     }
   }
-  return await getLatestRelease(octo)
+  return getLatestRelease(octo)
 }
 
 const getLatestRelease = async (octo: GithubOktokit) => {

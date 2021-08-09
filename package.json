@@ -34,12 +34,12 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@octokit/types": "^6.22.0",
+    "@octokit/types": "^6.24.0",
     "@types/jest": "^26.0.24",
-    "@types/node": "^16.4.10",
+    "@types/node": "^16.4.13",
     "@types/semver": "^7.3.8",
     "@types/uuid": "^8.3.1",
-    "@typescript-eslint/parser": "^4.28.5",
+    "@typescript-eslint/parser": "^4.29.1",
     "@vercel/ncc": "^0.29.0",
     "eslint": "^7.32.0",
     "eslint-plugin-github": "^4.1.5",
@@ -51,6 +51,6 @@
     "prettier": "2.3.2",
     "ts-jest": "^27.0.4",
     "typescript": "^4.3.5",
-    "webpack": "^5.47.1"
+    "webpack": "^5.49.0"
   }
 }

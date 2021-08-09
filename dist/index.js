@@ -63,17 +63,14 @@ const downloadBiber = (biberVersion) => __awaiter(void 0, void 0, void 0, functi
     return biberPath;
 });
 exports.downloadBiber = downloadBiber;
-const buildDownloadURL = (version, fileName, platform) => {
-    const link = [
-        constants_1.BIBER_DL_BASE_PATH,
-        version,
-        constants_1.BINARIES,
-        mapOsToIdentifier(platform),
-        fileName,
-        constants_1.DOWNLOAD
-    ].join('/');
-    return link;
-};
+const buildDownloadURL = (version, fileName, platform) => [
+    constants_1.BIBER_DL_BASE_PATH,
+    version,
+    constants_1.BINARIES,
+    mapOsToIdentifier(platform),
+    fileName,
+    constants_1.DOWNLOAD
+].join('/');
 exports.buildDownloadURL = buildDownloadURL;
 const mapOsToIdentifier = (platform) => {
     const mappings = {
@@ -214,7 +211,7 @@ const getTectonicRelease = (githubToken, version) => __awaiter(void 0, void 0, v
             return new Release(id, tag_name, asReleaseAsset(assets), name);
         }
     }
-    return yield getLatestRelease(octo);
+    return getLatestRelease(octo);
 });
 exports.getTectonicRelease = getTectonicRelease;
 const getLatestRelease = (octo) => __awaiter(void 0, void 0, void 0, function* () {
