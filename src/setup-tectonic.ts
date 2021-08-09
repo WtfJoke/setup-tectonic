@@ -46,7 +46,7 @@ const createPathForAppImage = async (appPath: string) => {
   core.debug(`Moved Tectonic from ${appPath} to ${newAppPath}`)
 
   // make it executable
-  fs.chmodSync(newAppPath, '755')
+  fs.chmodSync(newAppPath, '750')
 
   return tectonicPath
 }
