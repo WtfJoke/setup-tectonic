@@ -4,6 +4,13 @@
   </a>
 </p>
 
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=WtfJoke_setup-tectonic&metric=security_rating)](https://sonarcloud.io/dashboard?id=WtfJoke_setup-tectonic)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=WtfJoke_setup-tectonic&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=WtfJoke_setup-tectonic)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=WtfJoke_setup-tectonic&metric=bugs)](https://sonarcloud.io/dashboard?id=WtfJoke_setup-tectonic)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=WtfJoke_setup-tectonic&metric=code_smells)](https://sonarcloud.io/dashboard?id=WtfJoke_setup-tectonic)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=WtfJoke_setup-tectonic&metric=sqale_index)](https://sonarcloud.io/dashboard?id=WtfJoke_setup-tectonic)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=WtfJoke_setup-tectonic&metric=ncloc)](https://sonarcloud.io/dashboard?id=WtfJoke_setup-tectonic)
+
 The `wtfjoke/setup-tectonic` action is a JavaScript action that sets up [Tectonic](https://github.com/tectonic-typesetting/tectonic) in your GitHub Actions workflow by:
 
 - Downloading a requested version of Tectonic and adding it to the `PATH`.
