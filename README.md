@@ -1,9 +1,4 @@
-<p align="left">
-  <a href="https://github.com/WtfJoke/setup-tectonic/actions">
-    <img alt="CI" src="https://github.com/WtfJoke/setup-tectonic/workflows/CI/badge.svg">
-  </a>
-</p>
-
+[![CI](https://github.com/WtfJoke/setup-tectonic/actions/workflows/test.yml/badge.svg)](https://github.com/WtfJoke/setup-tectonic/actions/workflows/test.yml)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=WtfJoke_setup-tectonic&metric=security_rating)](https://sonarcloud.io/dashboard?id=WtfJoke_setup-tectonic)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=WtfJoke_setup-tectonic&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=WtfJoke_setup-tectonic)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=WtfJoke_setup-tectonic&metric=bugs)](https://sonarcloud.io/dashboard?id=WtfJoke_setup-tectonic)
