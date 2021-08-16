@@ -158,7 +158,7 @@ The existing github actions doesnt support biber (notable exception: [birjolaxew
 
 Additionaly most of the github actions tend to do too much or are too strict. 
 
-This github action has one job, to setup tectonic (and optionally biber). You can choose on your own how you want to call tectonic, how and if you want to cache your dependencies, how and if you want to upload your pdf. Depending on your decisions you can choose the best action to do the corresponding job (eg. [actions/cache](https://github.com/actions/cache) for caching, [actions/upload-artifact](https://github.com/actions/upload-artifact) or [actions/create-release](https://github.com/actions/create-release) for publihsing your pdf)
+This github action has one job, to setup tectonic (and optionally biber). You can choose on your own how you want to call tectonic, how and if you want to cache your dependencies, how and if you want to upload your pdf. Depending on your decisions you can choose the best action to do the corresponding job (eg. [actions/cache](https://github.com/actions/cache) for caching, [actions/upload-artifact](https://github.com/actions/upload-artifact) or [actions/create-release](https://github.com/actions/create-release) for publishing your pdf)
 
 
 # 🤓 How does the cache works?
