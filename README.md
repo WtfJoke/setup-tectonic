@@ -9,7 +9,7 @@
 The `wtfjoke/setup-tectonic` action is a JavaScript action that sets up [Tectonic](https://github.com/tectonic-typesetting/tectonic) in your GitHub Actions workflow by:
 
 - Downloading a requested version of Tectonic and adding it to the `PATH`.
-- (Optionally) downloading a requested version of Biber and adding it to the `PATH`.
+- (Optionally) downloading a requested version of [Biber](https://sourceforge.net/projects/biblatex-biber/) and adding it to the `PATH`.
 
 # :wrench: Usage
 
@@ -127,15 +127,20 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           biber-version: "latest"
       - name: Run Tectonic + Biber
-        run: |
-          tectonic --keep-intermediates --reruns 0 main.tex
-          biber main
-          tectonic main.tex
+        run: tectonic main.tex
       - name: Upload pdf
         uses: actions/upload-artifact@v2
         with:
           name: main
           path: main.pdf
+```
+
+**Note**: Tectonic has added biber support in `0.7.1` (see [changelog](https://github.com/tectonic-typesetting/tectonic/releases/tag/tectonic%400.7.1)). Prior to that version you need to run following commands:
+```yml
+run: |
+  tectonic --keep-intermediates --reruns 0 main.tex
+  biber main
+  tectonic main.tex
 ```
 
 # 📊 Comparison to other LaTeX/Tectonic actions like [vinay0410/tectonic-action](https://github.com/vinay0410/tectonic-action)
