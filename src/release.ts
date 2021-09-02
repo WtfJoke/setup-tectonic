@@ -1,8 +1,7 @@
+import {GithubOktokit, GithubReleaseAssets} from './github-types'
+import {RELEASE_TAG_IDENTIFIER, REPO_OWNER, TECTONIC} from './constants'
 import {getOctokit} from '@actions/github'
-
-import {RELEASE_TAG_IDENTIFIER, TECTONIC, REPO_OWNER} from './constants'
 import {valid} from 'semver'
-import {GithubReleaseAssets, GithubOktokit} from './githubTypes'
 
 interface ReleaseAsset {
   name: string
