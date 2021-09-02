@@ -1,12 +1,13 @@
-import * as os from 'os'
-import * as fs from 'fs'
-import * as path from 'path'
-import {v4 as uuid} from 'uuid'
-import * as io from '@actions/io'
 import * as core from '@actions/core'
+import * as fs from 'fs'
+import * as io from '@actions/io'
+import * as os from 'os'
+import * as path from 'path'
 import * as tc from '@actions/tool-cache'
-import {getTectonicRelease} from './release'
+
 import {downloadBiber} from './biber'
+import {getTectonicRelease} from './release'
+import {v4 as uuid} from 'uuid'
 
 const mapOS = (osKey: string) => {
   const mappings: Record<string, string> = {
@@ -89,8 +90,10 @@ export const setUpTectonic = async () => {
     }
 
     return release
-  } catch (error) {
-    core.error(error)
+  } catch (error: unknown) {
+    if (error instanceof Error || typeof error === 'string') {
+      core.error(error)
+    }
     throw error
   }
 }

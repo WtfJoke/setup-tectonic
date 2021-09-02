@@ -36,16 +36,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.buildDownloadURL = exports.downloadBiber = void 0;
-const os = __importStar(__nccwpck_require__(2087));
 const core = __importStar(__nccwpck_require__(2186));
+const os = __importStar(__nccwpck_require__(2087));
 const tc = __importStar(__nccwpck_require__(7784));
 const constants_1 = __nccwpck_require__(5105);
 const semver_1 = __nccwpck_require__(1383);
 const downloadBiber = (biberVersion) => __awaiter(void 0, void 0, void 0, function* () {
-    const validVersion = semver_1.valid(biberVersion) || 'current';
+    const validVersion = (0, semver_1.valid)(biberVersion) || 'current';
     const platform = os.platform();
     const fileName = mapOsToFileName(platform);
-    const url = exports.buildDownloadURL(validVersion, fileName, platform);
+    const url = (0, exports.buildDownloadURL)(validVersion, fileName, platform);
     core.debug(`Downloading Biber from ${url}`);
     const archivePath = yield tc.downloadTool(url);
     core.debug('Extracting Biber');
@@ -147,10 +147,16 @@ const core = __importStar(__nccwpck_require__(2186));
 const setup_tectonic_1 = __nccwpck_require__(6208);
 const run = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield setup_tectonic_1.setUpTectonic();
+        yield (0, setup_tectonic_1.setUpTectonic)();
     }
     catch (error) {
-        core.setFailed(error.message);
+        if (error instanceof Error || typeof error === 'string') {
+            const message = error instanceof Error ? error.message : error;
+            core.setFailed(message);
+        }
+        else {
+            core.setFailed('Unknown error');
+        }
     }
 });
 run();
@@ -174,8 +180,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getTectonicRelease = exports.Release = void 0;
-const github_1 = __nccwpck_require__(5438);
 const constants_1 = __nccwpck_require__(5105);
+const github_1 = __nccwpck_require__(5438);
 const semver_1 = __nccwpck_require__(1383);
 class Release {
     constructor(id, tagName, assets, name) {
@@ -198,8 +204,8 @@ class Release {
 }
 exports.Release = Release;
 const getTectonicRelease = (githubToken, version) => __awaiter(void 0, void 0, void 0, function* () {
-    const octo = github_1.getOctokit(githubToken);
-    const validVersion = semver_1.valid(version);
+    const octo = (0, github_1.getOctokit)(githubToken);
+    const validVersion = (0, semver_1.valid)(version);
     if (validVersion) {
         const { data: releaseData, status } = yield octo.rest.repos.getReleaseByTag({
             owner: constants_1.REPO_OWNER,
@@ -272,15 +278,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.setUpTectonic = void 0;
-const os = __importStar(__nccwpck_require__(2087));
-const fs = __importStar(__nccwpck_require__(5747));
-const path = __importStar(__nccwpck_require__(5622));
-const uuid_1 = __nccwpck_require__(5840);
-const io = __importStar(__nccwpck_require__(7436));
 const core = __importStar(__nccwpck_require__(2186));
+const fs = __importStar(__nccwpck_require__(5747));
+const io = __importStar(__nccwpck_require__(7436));
+const os = __importStar(__nccwpck_require__(2087));
+const path = __importStar(__nccwpck_require__(5622));
 const tc = __importStar(__nccwpck_require__(7784));
-const release_1 = __nccwpck_require__(878);
 const biber_1 = __nccwpck_require__(7154);
+const release_1 = __nccwpck_require__(878);
+const uuid_1 = __nccwpck_require__(5840);
 const mapOS = (osKey) => {
     const mappings = {
         win32: 'windows'
@@ -317,7 +323,7 @@ const createPathForAppImage = (appPath) => __awaiter(void 0, void 0, void 0, fun
     return tectonicPath;
 });
 const createTempFolder = (pathToExecutable) => __awaiter(void 0, void 0, void 0, function* () {
-    const destFolder = path.join(path.dirname(pathToExecutable), uuid_1.v4());
+    const destFolder = path.join(path.dirname(pathToExecutable), (0, uuid_1.v4)());
     yield io.mkdirP(destFolder);
     return destFolder;
 });
@@ -327,7 +333,7 @@ const setUpTectonic = () => __awaiter(void 0, void 0, void 0, function* () {
         const version = core.getInput('tectonic-version');
         const biberVersion = core.getInput('biber-version');
         core.debug(`Finding releases for Tectonic version ${version}`);
-        const release = yield release_1.getTectonicRelease(githubToken, version);
+        const release = yield (0, release_1.getTectonicRelease)(githubToken, version);
         const platform = mapOS(os.platform());
         core.debug(`Getting build for Tectonic version ${release.version}: ${platform}`);
         core.debug(`Release: ${JSON.stringify(release)}`);
@@ -340,13 +346,15 @@ const setUpTectonic = () => __awaiter(void 0, void 0, void 0, function* () {
         if (biberVersion) {
             // optionally download biber
             core.debug(`Biber version: ${biberVersion}`);
-            const biberPath = yield biber_1.downloadBiber(biberVersion);
+            const biberPath = yield (0, biber_1.downloadBiber)(biberVersion);
             core.addPath(biberPath);
         }
         return release;
     }
     catch (error) {
-        core.error(error);
+        if (error instanceof Error || typeof error === 'string') {
+            core.error(error);
+        }
         throw error;
     }
 });
@@ -488,7 +496,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getState = exports.saveState = exports.group = exports.endGroup = exports.startGroup = exports.info = exports.warning = exports.error = exports.debug = exports.isDebug = exports.setFailed = exports.setCommandEcho = exports.setOutput = exports.getBooleanInput = exports.getMultilineInput = exports.getInput = exports.addPath = exports.setSecret = exports.exportVariable = exports.ExitCode = void 0;
+exports.getState = exports.saveState = exports.group = exports.endGroup = exports.startGroup = exports.info = exports.notice = exports.warning = exports.error = exports.debug = exports.isDebug = exports.setFailed = exports.setCommandEcho = exports.setOutput = exports.getBooleanInput = exports.getMultilineInput = exports.getInput = exports.addPath = exports.setSecret = exports.exportVariable = exports.ExitCode = void 0;
 const command_1 = __nccwpck_require__(7351);
 const file_command_1 = __nccwpck_require__(717);
 const utils_1 = __nccwpck_require__(5278);
@@ -666,19 +674,30 @@ exports.debug = debug;
 /**
  * Adds an error issue
  * @param message error issue message. Errors will be converted to string via toString()
+ * @param properties optional properties to add to the annotation.
  */
-function error(message) {
-    command_1.issue('error', message instanceof Error ? message.toString() : message);
+function error(message, properties = {}) {
+    command_1.issueCommand('error', utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
 }
 exports.error = error;
 /**
- * Adds an warning issue
+ * Adds a warning issue
  * @param message warning issue message. Errors will be converted to string via toString()
+ * @param properties optional properties to add to the annotation.
  */
-function warning(message) {
-    command_1.issue('warning', message instanceof Error ? message.toString() : message);
+function warning(message, properties = {}) {
+    command_1.issueCommand('warning', utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
 }
 exports.warning = warning;
+/**
+ * Adds a notice issue
+ * @param message notice issue message. Errors will be converted to string via toString()
+ * @param properties optional properties to add to the annotation.
+ */
+function notice(message, properties = {}) {
+    command_1.issueCommand('notice', utils_1.toCommandProperties(properties), message instanceof Error ? message.toString() : message);
+}
+exports.notice = notice;
 /**
  * Writes info to log with console.log.
  * @param message info message
@@ -812,7 +831,7 @@ exports.issueCommand = issueCommand;
 // We use any as a valid input type
 /* eslint-disable @typescript-eslint/no-explicit-any */
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.toCommandValue = void 0;
+exports.toCommandProperties = exports.toCommandValue = void 0;
 /**
  * Sanitizes an input into a string so it can be passed into issueCommand safely
  * @param input input to sanitize into a string
@@ -827,6 +846,25 @@ function toCommandValue(input) {
     return JSON.stringify(input);
 }
 exports.toCommandValue = toCommandValue;
+/**
+ *
+ * @param annotationProperties
+ * @returns The command properties to send with the actual annotation command
+ * See IssueCommandProperties: https://github.com/actions/runner/blob/main/src/Runner.Worker/ActionCommandManager.cs#L646
+ */
+function toCommandProperties(annotationProperties) {
+    if (!Object.keys(annotationProperties).length) {
+        return {};
+    }
+    return {
+        title: annotationProperties.title,
+        line: annotationProperties.startLine,
+        endLine: annotationProperties.endLine,
+        col: annotationProperties.startColumn,
+        endColumn: annotationProperties.endColumn
+    };
+}
+exports.toCommandProperties = toCommandProperties;
 //# sourceMappingURL=utils.js.map
 
 /***/ }),

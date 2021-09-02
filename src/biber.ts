@@ -1,5 +1,5 @@
-import * as os from 'os'
 import * as core from '@actions/core'
+import * as os from 'os'
 import * as tc from '@actions/tool-cache'
 import {BIBER_DL_BASE_PATH, BINARIES, DOWNLOAD} from './constants'
 import {valid} from 'semver'

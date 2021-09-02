@@ -26,7 +26,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.4.0",
+    "@actions/core": "^1.5.0",
     "@actions/github": "^5.0.0",
     "@actions/io": "^1.1.1",
     "@actions/tool-cache": "^1.7.1",
@@ -34,23 +34,23 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@octokit/types": "^6.24.0",
-    "@types/jest": "^26.0.24",
-    "@types/node": "^16.4.13",
+    "@octokit/types": "^6.26.0",
+    "@types/jest": "^27.0.1",
+    "@types/node": "^16.7.10",
     "@types/semver": "^7.3.8",
     "@types/uuid": "^8.3.1",
-    "@typescript-eslint/parser": "^4.29.1",
-    "@vercel/ncc": "^0.29.0",
+    "@typescript-eslint/parser": "^4.30.0",
+    "@vercel/ncc": "^0.30.0",
     "eslint": "^7.32.0",
-    "eslint-plugin-github": "^4.1.5",
+    "eslint-plugin-github": "^4.2.0",
     "eslint-plugin-jest": "^24.4.0",
-    "eslint-plugin-prettier": "^3.4.0",
-    "jest": "^27.0.6",
-    "jest-circus": "^27.0.6",
+    "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^27.1.0",
+    "jest-circus": "^27.1.0",
     "js-yaml": "^4.1.0",
     "prettier": "2.3.2",
-    "ts-jest": "^27.0.4",
-    "typescript": "^4.3.5",
-    "webpack": "^5.49.0"
+    "ts-jest": "^27.0.5",
+    "typescript": "^4.4.2",
+    "webpack": "^5.51.2"
   }
 }
