@@ -35,7 +35,7 @@
   },
   "devDependencies": {
     "@octokit/types": "^6.34.0",
-    "@types/jest": "^27.0.2",
+    "@types/jest": "^27.0.3",
     "@types/node": "^16.11.6",
     "@types/semver": "^7.3.9",
     "@types/uuid": "^8.3.1",
