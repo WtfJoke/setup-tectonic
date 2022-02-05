@@ -2,6 +2,7 @@ import {buildDownloadURL, downloadBiber} from '../src/biber'
 import * as fs from 'fs'
 import * as path from 'path'
 import * as os from 'os'
+import {execFileSync} from 'child_process'
 
 const tempDir = path.join(__dirname, 'runner', 'temp')
 process.env['RUNNER_TEMP'] = tempDir
@@ -14,6 +15,10 @@ test('build download link', async () => {
   )
 })
 
+test('download non-existant biber version', async () => {
+  await expect(downloadBiber('0.0.0')).rejects.toThrow()
+}, 20000)
+
 test('download specific biber version', async () => {
   const biberPath = await downloadBiber('2.15')
   const fileExtension = os.platform() == 'win32' ? '.exe' : ''
@@ -21,6 +26,9 @@ test('download specific biber version', async () => {
 
   expect(fs.existsSync(biberPath)).toBe(true)
   expect(fs.existsSync(expectedBinaryPath)).toBe(true)
+  expect(execFileSync(expectedBinaryPath, ['--version']).toString()).toMatch(
+    /2\.15/
+  )
 }, 20000)
 
 test('download invalid biber version, should install current', async () => {
