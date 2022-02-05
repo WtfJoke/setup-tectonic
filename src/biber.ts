@@ -2,10 +2,26 @@ import * as core from '@actions/core'
 import * as os from 'os'
 import * as tc from '@actions/tool-cache'
 import {BIBER_DL_BASE_PATH, BINARIES, DOWNLOAD} from './constants'
-import {valid} from 'semver'
+import {coerce} from 'semver'
+
+const validBiberVersion = (biberVersion: string) => {
+  const biberSemVer = coerce(biberVersion)
+
+  if (biberSemVer === null) {
+    core.debug(
+      `Invalid biber version: ${biberVersion}. Defaulting to latest version`
+    )
+    return 'current'
+  }
+  if (biberSemVer.patch !== 0) {
+    return biberSemVer.version
+  }
+
+  return `${biberSemVer.major}.${biberSemVer.minor}`
+}
 
 export const downloadBiber = async (biberVersion: string) => {
-  const validVersion = valid(biberVersion) || 'current'
+  const validVersion = validBiberVersion(biberVersion)
   const platform = os.platform()
   const fileName = mapOsToFileName(platform)
   const url = buildDownloadURL(validVersion, fileName, platform)
