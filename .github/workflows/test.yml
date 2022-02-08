@@ -1,4 +1,4 @@
-name: 'CI'
+name: "CI"
 on: # rebuild any PRs and main branch changes
   pull_request:
   push:
@@ -12,6 +12,11 @@ jobs:
           yarn install
       - run: |
           yarn all
+      - name: Verify dist files are up to date
+        if: github.actor != 'dependabot[bot]'
+        run: |
+          # Fail if "yarn run build && yarn run package" generated new changes in dist
+          git update-index --refresh dist/* && git diff-index --quiet HEAD dist
   test: # make sure the action works on a clean machine without building
     strategy:
       matrix:
