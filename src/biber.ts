@@ -4,12 +4,12 @@ import * as tc from '@actions/tool-cache'
 import {BIBER_DL_BASE_PATH, BINARIES, DOWNLOAD} from './constants'
 import {coerce} from 'semver'
 
-const validBiberVersion = (biberVersion: string) => {
+export const validBiberVersion = (biberVersion: string) => {
   const biberSemVer = coerce(biberVersion)
 
   if (biberSemVer === null) {
     core.debug(
-      `Invalid biber version: ${biberVersion}. Defaulting to latest version`
+      `Invalid biber version: "${biberVersion}". Defaulting to latest version`
     )
     return 'current'
   }

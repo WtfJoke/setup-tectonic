@@ -35,7 +35,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.buildDownloadURL = exports.downloadBiber = void 0;
+exports.buildDownloadURL = exports.downloadBiber = exports.validBiberVersion = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const os = __importStar(__nccwpck_require__(2037));
 const tc = __importStar(__nccwpck_require__(7784));
@@ -44,7 +44,7 @@ const semver_1 = __nccwpck_require__(1383);
 const validBiberVersion = (biberVersion) => {
     const biberSemVer = (0, semver_1.coerce)(biberVersion);
     if (biberSemVer === null) {
-        core.debug(`Invalid biber version: ${biberVersion}. Defaulting to latest version`);
+        core.debug(`Invalid biber version: "${biberVersion}". Defaulting to latest version`);
         return 'current';
     }
     if (biberSemVer.patch !== 0) {
@@ -52,8 +52,9 @@ const validBiberVersion = (biberVersion) => {
     }
     return `${biberSemVer.major}.${biberSemVer.minor}`;
 };
+exports.validBiberVersion = validBiberVersion;
 const downloadBiber = (biberVersion) => __awaiter(void 0, void 0, void 0, function* () {
-    const validVersion = validBiberVersion(biberVersion);
+    const validVersion = (0, exports.validBiberVersion)(biberVersion);
     const platform = os.platform();
     const fileName = mapOsToFileName(platform);
     const url = (0, exports.buildDownloadURL)(validVersion, fileName, platform);

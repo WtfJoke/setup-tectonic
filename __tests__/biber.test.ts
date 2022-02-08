@@ -1,4 +1,4 @@
-import {buildDownloadURL, downloadBiber} from '../src/biber'
+import {buildDownloadURL, downloadBiber, validBiberVersion} from '../src/biber'
 import * as fs from 'fs'
 import * as path from 'path'
 import * as os from 'os'
@@ -13,6 +13,27 @@ test('build download link', async () => {
   expect(url).toBe(
     'https://sourceforge.net/projects/biblatex-biber/files/biblatex-biber/current/binaries/Windows/biber-MSWIN64.zip/download'
   )
+})
+
+test('get biber version from invalid input', () => {
+  expect(validBiberVersion('')).toBe('current')
+  expect(validBiberVersion('invalid')).toBe('current')
+  expect(validBiberVersion('current')).toBe('current')
+  expect(validBiberVersion('; sudo shutdown -h now #')).toBe('current')
+  expect(validBiberVersion('" SELECT * FROM super_secret_db ;')).toBe('current')
+})
+
+test('get biber version as major.minor', () => {
+  expect(validBiberVersion('   1.0 ')).toBe('1.0')
+  expect(validBiberVersion('  0.6.0 ')).toBe('0.6')
+  expect(validBiberVersion(' v 0.0.0 ')).toBe('0.0')
+})
+
+test('get biber version as major.minor.patch', () => {
+  expect(validBiberVersion('   0.9.8 ')).toBe('0.9.8')
+  expect(validBiberVersion('   0.9.9  ')).toBe('0.9.9')
+  expect(validBiberVersion('   0.9.10 ')).toBe('0.9.10')
+  expect(validBiberVersion(' 2.16.1')).toBe('2.16.1')
 })
 
 test('download non-existant biber version', async () => {
