@@ -5,5 +5,15 @@
   ],
   "schedule": [
     "monthly"
-  ]
+  ],
+  "separateMinorPatch": true,
+  "patch": {
+    "automerge": true
+  },
+  "pin": {
+    "automerge": true
+  },
+  "lockFileMaintenance": {
+    "automerge": true
+  }
 }
