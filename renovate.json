@@ -6,14 +6,16 @@
   "schedule": [
     "monthly"
   ],
-  "separateMinorPatch": true,
-  "patch": {
-    "automerge": true
-  },
-  "pin": {
-    "automerge": true
-  },
-  "lockFileMaintenance": {
-    "automerge": true
-  }
+  "updateNotScheduled": true,
+  "packageRules": [
+    {
+      "updateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
+      "automerge": true
+    }
+  ]
 }
