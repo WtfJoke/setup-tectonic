@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/named -- false positive
 import {Endpoints} from '@octokit/types'
 import {GitHub} from '@actions/github/lib/utils'
 
