@@ -59,14 +59,14 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - uses: wtfjoke/setup-tectonic@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Run Tectonic
         run: tectonic main.tex
       - name: Upload pdf
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: main
           path: main.pdf
@@ -83,8 +83,8 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-      - uses: actions/cache@v2
+        uses: actions/checkout@v3
+      - uses: actions/cache@v3
         name: Tectonic Cache
         with:
           path: ~/.cache/Tectonic
@@ -97,7 +97,7 @@ jobs:
       - name: Run Tectonic
         run: tectonic main.tex
       - name: Upload pdf
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: main
           path: main.pdf
@@ -114,8 +114,8 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-      - uses: actions/cache@v2
+        uses: actions/checkout@v3
+      - uses: actions/cache@v3
         name: Tectonic Cache
         with:
           path: ~/.cache/Tectonic
@@ -129,7 +129,7 @@ jobs:
       - name: Run Tectonic + Biber
         run: tectonic main.tex
       - name: Upload pdf
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: main
           path: main.pdf
