@@ -34,7 +34,7 @@
     "uuid": "8.3.2"
   },
   "devDependencies": {
-    "@octokit/types": "6.40.0",
+    "@octokit/types": "6.41.0",
     "@types/jest": "28.1.6",
     "@types/node": "18.6.1",
     "@types/semver": "7.3.10",
