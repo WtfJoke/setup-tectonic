@@ -11,25 +11,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: "16"
       - run: |
           yarn install
       - run: |
           yarn all
-      - name: Print Actor
-        run: |
-          echo $GITHUB_ACTOR
-      - name: Verify dist files are up to date
-        if: github.actor != 'renovate[bot]'
-        run: |
-          # Fail if "yarn run build && yarn run package" generated new changes in dist
-          git update-index --refresh dist/* && git diff-index --quiet HEAD dist
-      - name: Upload dist files when not up to date
-        uses: actions/upload-artifact@v3
-        if: failure()
-        with:
-          name: dist-files
-          path: dist/*
   test: # make sure the action works on a clean machine without building
     strategy:
       matrix:

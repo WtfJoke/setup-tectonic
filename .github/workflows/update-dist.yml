@@ -1,0 +1,31 @@
+name: "Update dist folder"
+on:
+  push:
+
+jobs:
+  dist-changed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "16"
+      - run: |
+          yarn install
+      - run: |
+          yarn run build && yarn run package
+      - name: Did dist folder changed?
+        run: |
+          EXIT_CODE=0
+          git update-index --refresh dist/* && git diff-index --quiet HEAD dist || EXIT_CODE=$?
+          # Set environment variable
+          echo "EXIT_CODE_DIST_CHANGED=$EXIT_CODE" >> $GITHUB_ENV
+      - name: Commit dist folder
+        if: ${{ env.EXIT_CODE_DIST_CHANGED == 1 }}
+        run: |
+          git config --global user.name 'Octocat'
+          git config --global user.email 'octocat@users.noreply.github.com'
+          git add dist/
+          git commit -m "🧹 Update dist folder"
+          git push
