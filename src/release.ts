@@ -1,9 +1,9 @@
 import {GithubOktokit, GithubReleaseAssets} from './github-types'
 import {RELEASE_TAG_IDENTIFIER, REPO_OWNER, TECTONIC} from './constants'
 import {getOctokit} from '@actions/github'
-import {valid} from 'semver'
+import {coerce, SemVer, valid} from 'semver'
 
-interface ReleaseAsset {
+export interface ReleaseAsset {
   name: string
   url: string
 }
@@ -12,6 +12,7 @@ export class Release {
   id: number
   name: string | null
   version: string
+  semVerVersion: SemVer | null
   tagName: string
   assets: ReleaseAsset[]
 
@@ -24,16 +25,21 @@ export class Release {
     this.id = id
     this.name = name
     this.version = tagName.replace(RELEASE_TAG_IDENTIFIER, '')
+    this.semVerVersion = coerce(this.version)
     this.tagName = tagName
     this.assets = assets
   }
 
   getAsset(platform: string): ReleaseAsset | undefined {
     const versionPrefix = `tectonic-${this.version}-x86_64`
+    const favourLinuxAppImage =
+      this.semVerVersion != null && this.semVerVersion.minor <= 10
     const platformFileNames: Record<string, string> = {
       windows: `${versionPrefix}-pc-${platform}-msvc.zip`,
       darwin: `${versionPrefix}-apple-${platform}.tar.gz`,
-      linux: `${versionPrefix}.AppImage`
+      linux: favourLinuxAppImage
+        ? `${versionPrefix}.AppImage`
+        : `${versionPrefix}-unknown-linux-gnu.tar.gz`
     }
     const fileName = platformFileNames[platform]
     return this.assets.find(ghAsset => ghAsset.name === fileName)

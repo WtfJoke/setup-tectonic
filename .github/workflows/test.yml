@@ -19,15 +19,15 @@ jobs:
   test: # make sure the action works on a clean machine without building
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
+        os: [windows-latest, ubuntu-latest, macos-latest, ubuntu-22.04]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
       - uses: ./
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          tectonic-version: 0.4.0
-          biber-version: 2.15
+          tectonic-version: 0.12.0
+          biber-version: 2.16
       - name: Tectonic version
         run: tectonic --version
       - name: Biber version
