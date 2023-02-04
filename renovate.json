@@ -1,21 +1,13 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base"
-  ],
-  "schedule": [
-    "monthly"
-  ],
+  "extends": ["config:base"],
+  "schedule": ["monthly"],
   "updateNotScheduled": true,
   "packageRules": [
     {
-      "updateTypes": [
-        "minor",
-        "patch",
-        "pin",
-        "digest"
-      ],
+      "updateTypes": ["minor", "patch", "pin", "digest"],
       "automerge": true
     }
-  ]
+  ],
+  "commitMessagePrefix": "⬆️"
 }
