@@ -40,7 +40,7 @@
     "@types/node": "16.x",
     "@types/semver": "7.3.13",
     "@types/uuid": "9.0.1",
-    "@typescript-eslint/parser": "5.50.0",
+    "@typescript-eslint/parser": "5.55.0",
     "@vercel/ncc": "0.36.1",
     "eslint": "8.33.0",
     "eslint-plugin-github": "4.6.1",
