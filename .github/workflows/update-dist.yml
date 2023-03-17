@@ -1,6 +1,7 @@
 name: "Update dist folder"
 on:
   push:
+    branches-ignore: renovate/*
 
 jobs:
   dist-changed:
