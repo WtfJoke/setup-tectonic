@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "@octokit/types": "9.2.3",
-    "@types/jest": "29.5.1",
+    "@types/jest": "29.5.2",
     "@types/node": "16.x",
     "@types/semver": "7.3.13",
     "@types/uuid": "9.0.1",
