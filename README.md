@@ -23,7 +23,7 @@ See [action.yml](https://github.com/WtfJoke/setup-tectonic/blob/main/action.yml)
 
 ```yml
 steps:
-  - uses: wtfjoke/setup-tectonic@v2
+  - uses: wtfjoke/setup-tectonic@v3
     with:
       github-token: ${{ secrets.GITHUB_TOKEN }}
   - run: tectonic main.tex
@@ -33,7 +33,7 @@ You can also download a specific version of Tectonic
 
 ```yml
 steps:
-  - uses: wtfjoke/setup-tectonic@v2
+  - uses: wtfjoke/setup-tectonic@v3
     with:
       github-token: ${{ secrets.GITHUB_TOKEN }}
       tectonic-version: 0.12.0
@@ -44,7 +44,7 @@ If you want to use biber, specify a biber version (for a full example see [below
 
 ```yml
 steps:
-  - uses: wtfjoke/setup-tectonic@v2
+  - uses: wtfjoke/setup-tectonic@v3
     with:
       github-token: ${{ secrets.GITHUB_TOKEN }}
       biber-version: 2.16
@@ -64,7 +64,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - uses: wtfjoke/setup-tectonic@v2
+      - uses: wtfjoke/setup-tectonic@v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Run Tectonic
@@ -96,7 +96,7 @@ jobs:
           key: ${{ runner.os }}-tectonic-${{ hashFiles('**/*.tex') }}
           restore-keys: |
             ${{ runner.os }}-tectonic-
-      - uses: wtfjoke/setup-tectonic@v2
+      - uses: wtfjoke/setup-tectonic@v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Run Tectonic
@@ -128,7 +128,7 @@ jobs:
           key: ${{ runner.os }}-tectonic-${{ hashFiles('**/*.tex') }}
           restore-keys: |
             ${{ runner.os }}-tectonic-
-      - uses: wtfjoke/setup-tectonic@v2
+      - uses: wtfjoke/setup-tectonic@v3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           biber-version: 'latest'
