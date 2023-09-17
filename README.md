@@ -36,7 +36,7 @@ steps:
   - uses: wtfjoke/setup-tectonic@v3
     with:
       github-token: ${{ secrets.GITHUB_TOKEN }}
-      tectonic-version: 0.12.0
+      tectonic-version: 0.14.1
   - run: tectonic main.tex
 ```
 
@@ -47,7 +47,7 @@ steps:
   - uses: wtfjoke/setup-tectonic@v3
     with:
       github-token: ${{ secrets.GITHUB_TOKEN }}
-      biber-version: 2.16
+      biber-version: 2.17
   - run: biber --version
 ```
 
