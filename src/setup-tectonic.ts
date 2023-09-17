@@ -7,7 +7,7 @@ import * as tc from '@actions/tool-cache'
 
 import {downloadBiber} from './biber'
 import {getTectonicRelease} from './release'
-import {v4 as uuid} from 'uuid'
+import {randomUUID} from 'crypto'
 
 const mapOS = (osKey: string) => {
   const mappings: Record<string, string> = {
@@ -53,7 +53,7 @@ const createPathForAppImage = async (appPath: string) => {
 }
 
 const createTempFolder = async (pathToExecutable: string) => {
-  const destFolder = path.join(path.dirname(pathToExecutable), uuid())
+  const destFolder = path.join(path.dirname(pathToExecutable), randomUUID())
   await io.mkdirP(destFolder)
   return destFolder
 }
