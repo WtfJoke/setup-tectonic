@@ -13,7 +13,7 @@ jobs:
     env:
       TAG_NAME: ${{github.event.release.tag_name}}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Update major version tag
         run: |
           major=`echo $TAG_NAME | cut -d. -f1`
