@@ -1,8 +1,8 @@
 import * as core from '@actions/core'
-import * as os from 'os'
 import * as tc from '@actions/tool-cache'
+import os from 'os'
 import {BIBER_DL_BASE_PATH, BINARIES, DOWNLOAD} from './constants'
-import {coerce} from 'semver'
+import {coerce, satisfies} from 'semver'
 
 export const validBiberVersion = (biberVersion: string) => {
   const biberSemVer = coerce(biberVersion)
@@ -54,15 +54,15 @@ export const buildDownloadURL = (
     BIBER_DL_BASE_PATH,
     version,
     BINARIES,
-    mapOsToIdentifier(platform),
+    mapOsToIdentifier(platform, version),
     fileName,
     DOWNLOAD
   ].join('/')
 
-const mapOsToIdentifier = (platform: string) => {
+const mapOsToIdentifier = (platform: string, version: string) => {
   const mappings: Record<string, string> = {
     win32: 'Windows',
-    darwin: 'OSX_Intel',
+    darwin: isUsingNewMacOsNaming(version) ? 'MacOS' : 'OSX_Intel',
     linux: 'Linux'
   }
   return mappings[platform] || platform
@@ -76,3 +76,14 @@ const mapOsToFileName = (platform: string) => {
   }
   return platformFileNames[platform]
 }
+
+/**
+ * Versions beginning with 2.17 uses 'MacOS' instead of 'OSX_Intel' as their platform identifier.
+ * @see https://sourceforge.net/projects/biblatex-biber/files/biblatex-biber/2.17/ compared to https://sourceforge.net/projects/biblatex-biber/files/biblatex-biber/2.16/
+ * @param version - the validated biber version (semver or 'current')
+ * @returns true if using the new naming scheme
+ */
+const isUsingNewMacOsNaming = (version: string) =>
+  version === 'current' ||
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  satisfies(coerce(version)!, '>=2.17')

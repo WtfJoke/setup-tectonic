@@ -7,12 +7,38 @@ import {execFileSync} from 'child_process'
 const tempDir = path.join(__dirname, 'runner', 'temp')
 process.env['RUNNER_TEMP'] = tempDir
 
-test('build download link', async () => {
-  const url = buildDownloadURL('current', 'biber-MSWIN64.zip', 'win32')
+describe('build download link', () => {
+  test("should build download link on windows for biber version 'current'", async () => {
+    const url = buildDownloadURL('current', 'biber-MSWIN64.zip', 'win32')
 
-  expect(url).toBe(
-    'https://sourceforge.net/projects/biblatex-biber/files/biblatex-biber/current/binaries/Windows/biber-MSWIN64.zip/download'
-  )
+    expect(url).toBe(
+      'https://sourceforge.net/projects/biblatex-biber/files/biblatex-biber/current/binaries/Windows/biber-MSWIN64.zip/download'
+    )
+  })
+
+  test('should build download link on mac os biber <=2.16', async () => {
+    const url = buildDownloadURL('2.16', 'biber-darwin_x86_64.tar.gz', 'darwin')
+
+    expect(url).toBe(
+      'https://sourceforge.net/projects/biblatex-biber/files/biblatex-biber/2.16/binaries/OSX_Intel/biber-darwin_x86_64.tar.gz/download'
+    )
+  })
+
+  test('should build download link on mac os biber >=2.17', async () => {
+    const url = buildDownloadURL('2.17', 'biber-darwin_x86_64.tar.gz', 'darwin')
+
+    expect(url).toBe(
+      'https://sourceforge.net/projects/biblatex-biber/files/biblatex-biber/2.17/binaries/MacOS/biber-darwin_x86_64.tar.gz/download'
+    )
+  })
+
+  test('should build download link on mac os biber 2.18', async () => {
+    const url = buildDownloadURL('2.18', 'biber-darwin_x86_64.tar.gz', 'darwin')
+
+    expect(url).toBe(
+      'https://sourceforge.net/projects/biblatex-biber/files/biblatex-biber/2.18/binaries/MacOS/biber-darwin_x86_64.tar.gz/download'
+    )
+  })
 })
 
 test('get biber version from invalid input', () => {
