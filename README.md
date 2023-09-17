@@ -187,7 +187,7 @@ The official cache action [actions/cache](https://github.com/actions/cache) has 
 For tectonic the cache directories (`path`) are as follows (see also [tectonic-typesetting/tectonic#159](https://github.com/tectonic-typesetting/tectonic/issues/159)):
 
 | OS      | Cache-Directory                           | Run-Command to export it as environment variable                          |
-| ------- | ----------------------------------------- | ------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| ------- | ----------------------------------------- | ------------------------------------------------------------------------- |
 | Linux   | `~/.cache/Tectonic`                       | `echo TECTONIC_CACHE_PATH=~/.cache/Tectonic >> $GITHUB_ENV`               |
 | Mac     | `~/Library/Caches/Tectonic`               | `echo TECTONIC_CACHE_PATH=~/Library/Caches/Tectonic >> $GITHUB_ENV`       |
 | Windows | `%LOCALAPPDATA%\TectonicProject\Tectonic` | <code>echo TECTONIC_CACHE_PATH=$env:LOCALAPPDATA\TectonicProject\Tectonic | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append`</code> |
