@@ -38,11 +38,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.buildDownloadURL = exports.downloadBiber = exports.validBiberVersion = void 0;
 const core = __importStar(__nccwpck_require__(2186));
-const os = __importStar(__nccwpck_require__(2037));
 const tc = __importStar(__nccwpck_require__(7784));
+const os_1 = __importDefault(__nccwpck_require__(2037));
 const constants_1 = __nccwpck_require__(5105);
 const semver_1 = __nccwpck_require__(1383);
 const validBiberVersion = (biberVersion) => {
@@ -59,7 +62,7 @@ const validBiberVersion = (biberVersion) => {
 exports.validBiberVersion = validBiberVersion;
 const downloadBiber = (biberVersion) => __awaiter(void 0, void 0, void 0, function* () {
     const validVersion = (0, exports.validBiberVersion)(biberVersion);
-    const platform = os.platform();
+    const platform = os_1.default.platform();
     const fileName = mapOsToFileName(platform);
     const url = (0, exports.buildDownloadURL)(validVersion, fileName, platform);
     core.debug(`Downloading Biber from ${url}`);
@@ -83,15 +86,15 @@ const buildDownloadURL = (version, fileName, platform) => [
     constants_1.BIBER_DL_BASE_PATH,
     version,
     constants_1.BINARIES,
-    mapOsToIdentifier(platform),
+    mapOsToIdentifier(platform, version),
     fileName,
     constants_1.DOWNLOAD
 ].join('/');
 exports.buildDownloadURL = buildDownloadURL;
-const mapOsToIdentifier = (platform) => {
+const mapOsToIdentifier = (platform, version) => {
     const mappings = {
         win32: 'Windows',
-        darwin: 'OSX_Intel',
+        darwin: isUsingNewMacOsNaming(version) ? 'MacOS' : 'OSX_Intel',
         linux: 'Linux'
     };
     return mappings[platform] || platform;
@@ -104,6 +107,15 @@ const mapOsToFileName = (platform) => {
     };
     return platformFileNames[platform];
 };
+/**
+ * Versions beginning with 2.17 uses 'MacOS' instead of 'OSX_Intel' as their platform identifier.
+ * @see https://sourceforge.net/projects/biblatex-biber/files/biblatex-biber/2.17/ compared to https://sourceforge.net/projects/biblatex-biber/files/biblatex-biber/2.16/
+ * @param version - the validated biber version (semver or 'current')
+ * @returns true if using the new naming scheme
+ */
+const isUsingNewMacOsNaming = (version) => version === 'current' ||
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    (0, semver_1.satisfies)((0, semver_1.coerce)(version), '>=2.17');
 
 
 /***/ }),
