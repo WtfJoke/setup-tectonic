@@ -19,7 +19,7 @@ jobs:
   test: # make sure the action works on a clean machine without building
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest, ubuntu-22.04]
+        os: [windows-latest, ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
