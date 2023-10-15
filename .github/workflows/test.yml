@@ -12,10 +12,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version-file: '.nvmrc'
-      - run: |
-          yarn install
-      - run: |
-          yarn all
+          cache: 'npm'
+      - name: Install dependencies
+        run: |
+          npm install
+      - name: Build + package + tests
+        run: |
+          npm run all
   test: # make sure the action works on a clean machine without building
     strategy:
       matrix:
