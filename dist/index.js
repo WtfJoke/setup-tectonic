@@ -8061,7 +8061,7 @@ module.exports = __toCommonJS(dist_src_exports);
 var import_universal_user_agent = __nccwpck_require__(5030);
 
 // pkg/dist-src/version.js
-var VERSION = "9.0.1";
+var VERSION = "9.0.2";
 
 // pkg/dist-src/defaults.js
 var userAgent = `octokit-endpoint.js/${VERSION} ${(0, import_universal_user_agent.getUserAgent)()}`;
@@ -8269,7 +8269,7 @@ function parseUrl(template) {
 }
 function expand(template, context) {
   var operators = ["+", "#", ".", "/", ";", "?", "&"];
-  return template.replace(
+  template = template.replace(
     /\{([^\{\}]+)\}|([^\{\}]+)/g,
     function(_, expression, literal) {
       if (expression) {
@@ -8299,6 +8299,11 @@ function expand(template, context) {
       }
     }
   );
+  if (template === "/") {
+    return template;
+  } else {
+    return template.replace(/\/$/, "");
+  }
 }
 
 // pkg/dist-src/parse.js
@@ -8583,7 +8588,7 @@ __export(dist_src_exports, {
 module.exports = __toCommonJS(dist_src_exports);
 
 // pkg/dist-src/version.js
-var VERSION = "9.0.0";
+var VERSION = "9.1.2";
 
 // pkg/dist-src/normalize-paginated-list-response.js
 function normalizePaginatedListResponse(response) {
@@ -8752,9 +8757,11 @@ var paginatingEndpoints = [
   "GET /orgs/{org}/personal-access-tokens",
   "GET /orgs/{org}/personal-access-tokens/{pat_id}/repositories",
   "GET /orgs/{org}/projects",
+  "GET /orgs/{org}/properties/values",
   "GET /orgs/{org}/public_members",
   "GET /orgs/{org}/repos",
   "GET /orgs/{org}/rulesets",
+  "GET /orgs/{org}/rulesets/rule-suites",
   "GET /orgs/{org}/secret-scanning/alerts",
   "GET /orgs/{org}/security-advisories",
   "GET /orgs/{org}/teams",
@@ -8846,6 +8853,7 @@ var paginatingEndpoints = [
   "GET /repos/{owner}/{repo}/releases/{release_id}/reactions",
   "GET /repos/{owner}/{repo}/rules/branches/{branch}",
   "GET /repos/{owner}/{repo}/rulesets",
+  "GET /repos/{owner}/{repo}/rulesets/rule-suites",
   "GET /repos/{owner}/{repo}/secret-scanning/alerts",
   "GET /repos/{owner}/{repo}/secret-scanning/alerts/{alert_number}/locations",
   "GET /repos/{owner}/{repo}/security-advisories",
@@ -8977,7 +8985,7 @@ __export(dist_src_exports, {
 module.exports = __toCommonJS(dist_src_exports);
 
 // pkg/dist-src/version.js
-var VERSION = "10.0.1";
+var VERSION = "10.1.2";
 
 // pkg/dist-src/generated/endpoints.js
 var Endpoints = {
@@ -9081,6 +9089,9 @@ var Endpoints = {
     ],
     enableWorkflow: [
       "PUT /repos/{owner}/{repo}/actions/workflows/{workflow_id}/enable"
+    ],
+    forceCancelWorkflowRun: [
+      "POST /repos/{owner}/{repo}/actions/runs/{run_id}/force-cancel"
     ],
     generateRunnerJitconfigForOrg: [
       "POST /orgs/{org}/actions/runners/generate-jitconfig"
@@ -9491,6 +9502,9 @@ var Endpoints = {
     addSelectedRepoToOrgSecret: [
       "PUT /orgs/{org}/codespaces/secrets/{secret_name}/repositories/{repository_id}"
     ],
+    checkPermissionsForDevcontainer: [
+      "GET /repos/{owner}/{repo}/codespaces/permissions_check"
+    ],
     codespaceMachinesForAuthenticatedUser: [
       "GET /user/codespaces/{codespace_name}/machines"
     ],
@@ -9608,7 +9622,7 @@ var Endpoints = {
       "DELETE /orgs/{org}/copilot/billing/selected_users"
     ],
     getCopilotOrganizationDetails: ["GET /orgs/{org}/copilot/billing"],
-    getCopilotSeatAssignmentDetailsForUser: [
+    getCopilotSeatDetailsForUser: [
       "GET /orgs/{org}/members/{username}/copilot"
     ],
     listCopilotSeats: ["GET /orgs/{org}/copilot/billing/seats"]
@@ -9821,7 +9835,13 @@ var Endpoints = {
     root: ["GET /"]
   },
   migrations: {
-    cancelImport: ["DELETE /repos/{owner}/{repo}/import"],
+    cancelImport: [
+      "DELETE /repos/{owner}/{repo}/import",
+      {},
+      {
+        deprecated: "octokit.rest.migrations.cancelImport() is deprecated, see https://docs.github.com/rest/migrations/source-imports#cancel-an-import"
+      }
+    ],
     deleteArchiveForAuthenticatedUser: [
       "DELETE /user/migrations/{migration_id}/archive"
     ],
@@ -9834,9 +9854,27 @@ var Endpoints = {
     getArchiveForAuthenticatedUser: [
       "GET /user/migrations/{migration_id}/archive"
     ],
-    getCommitAuthors: ["GET /repos/{owner}/{repo}/import/authors"],
-    getImportStatus: ["GET /repos/{owner}/{repo}/import"],
-    getLargeFiles: ["GET /repos/{owner}/{repo}/import/large_files"],
+    getCommitAuthors: [
+      "GET /repos/{owner}/{repo}/import/authors",
+      {},
+      {
+        deprecated: "octokit.rest.migrations.getCommitAuthors() is deprecated, see https://docs.github.com/rest/migrations/source-imports#get-commit-authors"
+      }
+    ],
+    getImportStatus: [
+      "GET /repos/{owner}/{repo}/import",
+      {},
+      {
+        deprecated: "octokit.rest.migrations.getImportStatus() is deprecated, see https://docs.github.com/rest/migrations/source-imports#get-an-import-status"
+      }
+    ],
+    getLargeFiles: [
+      "GET /repos/{owner}/{repo}/import/large_files",
+      {},
+      {
+        deprecated: "octokit.rest.migrations.getLargeFiles() is deprecated, see https://docs.github.com/rest/migrations/source-imports#get-large-files"
+      }
+    ],
     getStatusForAuthenticatedUser: ["GET /user/migrations/{migration_id}"],
     getStatusForOrg: ["GET /orgs/{org}/migrations/{migration_id}"],
     listForAuthenticatedUser: ["GET /user/migrations"],
@@ -9850,18 +9888,42 @@ var Endpoints = {
       {},
       { renamed: ["migrations", "listReposForAuthenticatedUser"] }
     ],
-    mapCommitAuthor: ["PATCH /repos/{owner}/{repo}/import/authors/{author_id}"],
-    setLfsPreference: ["PATCH /repos/{owner}/{repo}/import/lfs"],
+    mapCommitAuthor: [
+      "PATCH /repos/{owner}/{repo}/import/authors/{author_id}",
+      {},
+      {
+        deprecated: "octokit.rest.migrations.mapCommitAuthor() is deprecated, see https://docs.github.com/rest/migrations/source-imports#map-a-commit-author"
+      }
+    ],
+    setLfsPreference: [
+      "PATCH /repos/{owner}/{repo}/import/lfs",
+      {},
+      {
+        deprecated: "octokit.rest.migrations.setLfsPreference() is deprecated, see https://docs.github.com/rest/migrations/source-imports#update-git-lfs-preference"
+      }
+    ],
     startForAuthenticatedUser: ["POST /user/migrations"],
     startForOrg: ["POST /orgs/{org}/migrations"],
-    startImport: ["PUT /repos/{owner}/{repo}/import"],
+    startImport: [
+      "PUT /repos/{owner}/{repo}/import",
+      {},
+      {
+        deprecated: "octokit.rest.migrations.startImport() is deprecated, see https://docs.github.com/rest/migrations/source-imports#start-an-import"
+      }
+    ],
     unlockRepoForAuthenticatedUser: [
       "DELETE /user/migrations/{migration_id}/repos/{repo_name}/lock"
     ],
     unlockRepoForOrg: [
       "DELETE /orgs/{org}/migrations/{migration_id}/repos/{repo_name}/lock"
     ],
-    updateImport: ["PATCH /repos/{owner}/{repo}/import"]
+    updateImport: [
+      "PATCH /repos/{owner}/{repo}/import",
+      {},
+      {
+        deprecated: "octokit.rest.migrations.updateImport() is deprecated, see https://docs.github.com/rest/migrations/source-imports#update-an-import"
+      }
+    ]
   },
   orgs: {
     addSecurityManagerTeam: [
@@ -9876,6 +9938,13 @@ var Endpoints = {
       "PUT /orgs/{org}/outside_collaborators/{username}"
     ],
     createInvitation: ["POST /orgs/{org}/invitations"],
+    createOrUpdateCustomProperties: ["PATCH /orgs/{org}/properties/schema"],
+    createOrUpdateCustomPropertiesValuesForRepos: [
+      "PATCH /orgs/{org}/properties/values"
+    ],
+    createOrUpdateCustomProperty: [
+      "PUT /orgs/{org}/properties/schema/{custom_property_name}"
+    ],
     createWebhook: ["POST /orgs/{org}/hooks"],
     delete: ["DELETE /orgs/{org}"],
     deleteWebhook: ["DELETE /orgs/{org}/hooks/{hook_id}"],
@@ -9883,6 +9952,10 @@ var Endpoints = {
       "POST /orgs/{org}/{security_product}/{enablement}"
     ],
     get: ["GET /orgs/{org}"],
+    getAllCustomProperties: ["GET /orgs/{org}/properties/schema"],
+    getCustomProperty: [
+      "GET /orgs/{org}/properties/schema/{custom_property_name}"
+    ],
     getMembershipForAuthenticatedUser: ["GET /user/memberships/orgs/{org}"],
     getMembershipForUser: ["GET /orgs/{org}/memberships/{username}"],
     getWebhook: ["GET /orgs/{org}/hooks/{hook_id}"],
@@ -9893,6 +9966,7 @@ var Endpoints = {
     list: ["GET /organizations"],
     listAppInstallations: ["GET /orgs/{org}/installations"],
     listBlockedUsers: ["GET /orgs/{org}/blocks"],
+    listCustomPropertiesValuesForRepos: ["GET /orgs/{org}/properties/values"],
     listFailedInvitations: ["GET /orgs/{org}/failed_invitations"],
     listForAuthenticatedUser: ["GET /user/orgs"],
     listForUser: ["GET /users/{username}/orgs"],
@@ -9916,6 +9990,9 @@ var Endpoints = {
     pingWebhook: ["POST /orgs/{org}/hooks/{hook_id}/pings"],
     redeliverWebhookDelivery: [
       "POST /orgs/{org}/hooks/{hook_id}/deliveries/{delivery_id}/attempts"
+    ],
+    removeCustomProperty: [
+      "DELETE /orgs/{org}/properties/schema/{custom_property_name}"
     ],
     removeMember: ["DELETE /orgs/{org}/members/{username}"],
     removeMembershipForUser: ["DELETE /orgs/{org}/memberships/{username}"],
@@ -10397,6 +10474,7 @@ var Endpoints = {
     getCustomDeploymentProtectionRule: [
       "GET /repos/{owner}/{repo}/environments/{environment_name}/deployment_protection_rules/{protection_rule_id}"
     ],
+    getCustomPropertiesValues: ["GET /repos/{owner}/{repo}/properties/values"],
     getDeployKey: ["GET /repos/{owner}/{repo}/keys/{key_id}"],
     getDeployment: ["GET /repos/{owner}/{repo}/deployments/{deployment_id}"],
     getDeploymentBranchPolicy: [
@@ -10410,6 +10488,8 @@ var Endpoints = {
     ],
     getLatestPagesBuild: ["GET /repos/{owner}/{repo}/pages/builds/latest"],
     getLatestRelease: ["GET /repos/{owner}/{repo}/releases/latest"],
+    getOrgRuleSuite: ["GET /orgs/{org}/rulesets/rule-suites/{rule_suite_id}"],
+    getOrgRuleSuites: ["GET /orgs/{org}/rulesets/rule-suites"],
     getOrgRuleset: ["GET /orgs/{org}/rulesets/{ruleset_id}"],
     getOrgRulesets: ["GET /orgs/{org}/rulesets"],
     getPages: ["GET /repos/{owner}/{repo}/pages"],
@@ -10425,6 +10505,10 @@ var Endpoints = {
     getRelease: ["GET /repos/{owner}/{repo}/releases/{release_id}"],
     getReleaseAsset: ["GET /repos/{owner}/{repo}/releases/assets/{asset_id}"],
     getReleaseByTag: ["GET /repos/{owner}/{repo}/releases/tags/{tag}"],
+    getRepoRuleSuite: [
+      "GET /repos/{owner}/{repo}/rulesets/rule-suites/{rule_suite_id}"
+    ],
+    getRepoRuleSuites: ["GET /repos/{owner}/{repo}/rulesets/rule-suites"],
     getRepoRuleset: ["GET /repos/{owner}/{repo}/rulesets/{ruleset_id}"],
     getRepoRulesets: ["GET /repos/{owner}/{repo}/rulesets"],
     getStatusChecksProtection: [
@@ -16195,6 +16279,10 @@ class StreamHandler extends AsyncResource {
         { callback, body: res, contentType, statusCode, statusMessage, headers }
       )
     } else {
+      if (factory === null) {
+        return
+      }
+
       res = this.runInAsyncScope(factory, null, {
         statusCode,
         headers,
@@ -16243,13 +16331,17 @@ class StreamHandler extends AsyncResource {
   onData (chunk) {
     const { res } = this
 
-    return res.write(chunk)
+    return res ? res.write(chunk) : true
   }
 
   onComplete (trailers) {
     const { res } = this
 
     removeSignal(this)
+
+    if (!res) {
+      return
+    }
 
     this.trailers = util.parseHeaders(trailers)
 
@@ -16707,7 +16799,7 @@ function consumeEnd (consume) {
         pos += buf.byteLength
       }
 
-      resolve(dst)
+      resolve(dst.buffer)
     } else if (type === 'blob') {
       if (!Blob) {
         Blob = (__nccwpck_require__(4300).Blob)
@@ -19143,7 +19235,9 @@ function onParserTimeout (parser) {
 
 function onSocketReadable () {
   const { [kParser]: parser } = this
-  parser.readMore()
+  if (parser) {
+    parser.readMore()
+  }
 }
 
 function onSocketError (err) {
@@ -19533,23 +19627,7 @@ function _resume (client, sync) {
       return
     }
 
-    if (util.isStream(request.body) && util.bodyLength(request.body) === 0) {
-      request.body
-        .on('data', /* istanbul ignore next */ function () {
-          /* istanbul ignore next */
-          assert(false)
-        })
-        .on('error', function (err) {
-          errorRequest(client, request, err)
-        })
-        .on('end', function () {
-          util.destroy(this)
-        })
-
-      request.body = null
-    }
-
-    if (client[kRunning] > 0 &&
+    if (client[kRunning] > 0 && util.bodyLength(request.body) !== 0 &&
       (util.isStream(request.body) || util.isAsyncIterable(request.body))) {
       // Request with stream or iterator body can error while other requests
       // are inflight and indirectly error those as well.
@@ -19568,6 +19646,11 @@ function _resume (client, sync) {
       client[kQueue].splice(client[kPendingIdx], 1)
     }
   }
+}
+
+// https://www.rfc-editor.org/rfc/rfc7230#section-3.3.2
+function shouldSendContentLength (method) {
+  return method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS' && method !== 'TRACE' && method !== 'CONNECT'
 }
 
 function write (client, request) {
@@ -19598,7 +19681,9 @@ function write (client, request) {
     body.read(0)
   }
 
-  let contentLength = util.bodyLength(body)
+  const bodyLength = util.bodyLength(body)
+
+  let contentLength = bodyLength
 
   if (contentLength === null) {
     contentLength = request.contentLength
@@ -19613,7 +19698,9 @@ function write (client, request) {
     contentLength = null
   }
 
-  if (request.contentLength !== null && request.contentLength !== contentLength) {
+  // https://github.com/nodejs/undici/issues/2046
+  // A user agent may send a Content-Length header with 0 value, this should be allowed.
+  if (shouldSendContentLength(method) && contentLength > 0 && request.contentLength !== null && request.contentLength !== contentLength) {
     if (client[kStrictContentLength]) {
       errorRequest(client, request, new RequestContentLengthMismatchError())
       return false
@@ -19694,7 +19781,7 @@ function write (client, request) {
   }
 
   /* istanbul ignore else: assertion */
-  if (!body) {
+  if (!body || bodyLength === 0) {
     if (contentLength === 0) {
       socket.write(`${header}content-length: 0\r\n\r\n`, 'latin1')
     } else {
@@ -19834,7 +19921,9 @@ function writeH2 (client, session, request) {
     contentLength = null
   }
 
-  if (request.contentLength != null && request.contentLength !== contentLength) {
+  // https://github.com/nodejs/undici/issues/2046
+  // A user agent may send a Content-Length header with 0 value, this should be allowed.
+  if (shouldSendContentLength(method) && contentLength > 0 && request.contentLength != null && request.contentLength !== contentLength) {
     if (client[kStrictContentLength]) {
       errorRequest(client, request, new RequestContentLengthMismatchError())
       return false
@@ -21796,10 +21885,29 @@ class Request {
 
     this.method = method
 
+    this.abort = null
+
     if (body == null) {
       this.body = null
     } else if (util.isStream(body)) {
       this.body = body
+
+      const rState = this.body._readableState
+      if (!rState || !rState.autoDestroy) {
+        this.endHandler = function autoDestroy () {
+          util.destroy(this)
+        }
+        this.body.on('end', this.endHandler)
+      }
+
+      this.errorHandler = err => {
+        if (this.abort) {
+          this.abort(err)
+        } else {
+          this.error = err
+        }
+      }
+      this.body.on('error', this.errorHandler)
     } else if (util.isBuffer(body)) {
       this.body = body.byteLength ? body : null
     } else if (ArrayBuffer.isView(body)) {
@@ -21906,13 +22014,26 @@ class Request {
     if (channels.bodySent.hasSubscribers) {
       channels.bodySent.publish({ request: this })
     }
+
+    if (this[kHandler].onRequestSent) {
+      try {
+        this[kHandler].onRequestSent()
+      } catch (err) {
+        this.onError(err)
+      }
+    }
   }
 
   onConnect (abort) {
     assert(!this.aborted)
     assert(!this.completed)
 
-    return this[kHandler].onConnect(abort)
+    if (this.error) {
+      abort(this.error)
+    } else {
+      this.abort = abort
+      return this[kHandler].onConnect(abort)
+    }
   }
 
   onHeaders (statusCode, headers, resume, statusText) {
@@ -21941,6 +22062,8 @@ class Request {
   }
 
   onComplete (trailers) {
+    this.onFinally()
+
     assert(!this.aborted)
 
     this.completed = true
@@ -21951,6 +22074,8 @@ class Request {
   }
 
   onError (error) {
+    this.onFinally()
+
     if (channels.error.hasSubscribers) {
       channels.error.publish({ request: this, error })
     }
@@ -21960,6 +22085,18 @@ class Request {
     }
     this.aborted = true
     return this[kHandler].onError(error)
+  }
+
+  onFinally () {
+    if (this.errorHandler) {
+      this.body.off('error', this.errorHandler)
+      this.errorHandler = null
+    }
+
+    if (this.endHandler) {
+      this.body.off('end', this.endHandler)
+      this.endHandler = null
+    }
   }
 
   // TODO: adjust to support H2
@@ -22385,7 +22522,7 @@ function isReadableAborted (stream) {
 }
 
 function destroy (stream, err) {
-  if (!isStream(stream) || isDestroyed(stream)) {
+  if (stream == null || !isStream(stream) || isDestroyed(stream)) {
     return
   }
 
@@ -22959,6 +23096,8 @@ let ReadableStream = globalThis.ReadableStream
 
 /** @type {globalThis['File']} */
 const File = NativeFile ?? UndiciFile
+const textEncoder = new TextEncoder()
+const textDecoder = new TextDecoder()
 
 // https://fetch.spec.whatwg.org/#concept-bodyinit-extract
 function extractBody (object, keepalive = false) {
@@ -22982,7 +23121,7 @@ function extractBody (object, keepalive = false) {
     stream = new ReadableStream({
       async pull (controller) {
         controller.enqueue(
-          typeof source === 'string' ? new TextEncoder().encode(source) : source
+          typeof source === 'string' ? textEncoder.encode(source) : source
         )
         queueMicrotask(() => readableStreamClose(controller))
       },
@@ -23052,7 +23191,6 @@ function extractBody (object, keepalive = false) {
     // - That the content-length is calculated in advance.
     // - And that all parts are pre-encoded and ready to be sent.
 
-    const enc = new TextEncoder()
     const blobParts = []
     const rn = new Uint8Array([13, 10]) // '\r\n'
     length = 0
@@ -23060,13 +23198,13 @@ function extractBody (object, keepalive = false) {
 
     for (const [name, value] of object) {
       if (typeof value === 'string') {
-        const chunk = enc.encode(prefix +
+        const chunk = textEncoder.encode(prefix +
           `; name="${escape(normalizeLinefeeds(name))}"` +
           `\r\n\r\n${normalizeLinefeeds(value)}\r\n`)
         blobParts.push(chunk)
         length += chunk.byteLength
       } else {
-        const chunk = enc.encode(`${prefix}; name="${escape(normalizeLinefeeds(name))}"` +
+        const chunk = textEncoder.encode(`${prefix}; name="${escape(normalizeLinefeeds(name))}"` +
           (value.name ? `; filename="${escape(value.name)}"` : '') + '\r\n' +
           `Content-Type: ${
             value.type || 'application/octet-stream'
@@ -23080,7 +23218,7 @@ function extractBody (object, keepalive = false) {
       }
     }
 
-    const chunk = enc.encode(`--${boundary}--`)
+    const chunk = textEncoder.encode(`--${boundary}--`)
     blobParts.push(chunk)
     length += chunk.byteLength
     if (hasUnknownSizeValue) {
@@ -23376,14 +23514,16 @@ function bodyMixinMethods (instance) {
           let text = ''
           // application/x-www-form-urlencoded parser will keep the BOM.
           // https://url.spec.whatwg.org/#concept-urlencoded-parser
-          const textDecoder = new TextDecoder('utf-8', { ignoreBOM: true })
+          // Note that streaming decoder is stateful and cannot be reused
+          const streamingDecoder = new TextDecoder('utf-8', { ignoreBOM: true })
+
           for await (const chunk of consumeBody(this[kState].body)) {
             if (!isUint8Array(chunk)) {
               throw new TypeError('Expected Uint8Array chunk')
             }
-            text += textDecoder.decode(chunk, { stream: true })
+            text += streamingDecoder.decode(chunk, { stream: true })
           }
-          text += textDecoder.decode()
+          text += streamingDecoder.decode()
           entries = new URLSearchParams(text)
         } catch (err) {
           // istanbul ignore next: Unclear when new URLSearchParams can fail on a string.
@@ -23498,7 +23638,7 @@ function utf8DecodeBytes (buffer) {
 
   // 3. Process a queue with an instance of UTF-8’s
   //    decoder, ioQueue, output, and "replacement".
-  const output = new TextDecoder().decode(buffer)
+  const output = textDecoder.decode(buffer)
 
   // 4. Return output.
   return output
@@ -23546,10 +23686,12 @@ module.exports = {
 const { MessageChannel, receiveMessageOnPort } = __nccwpck_require__(1267)
 
 const corsSafeListedMethods = ['GET', 'HEAD', 'POST']
+const corsSafeListedMethodsSet = new Set(corsSafeListedMethods)
 
 const nullBodyStatus = [101, 204, 205, 304]
 
 const redirectStatus = [301, 302, 303, 307, 308]
+const redirectStatusSet = new Set(redirectStatus)
 
 // https://fetch.spec.whatwg.org/#block-bad-port
 const badPorts = [
@@ -23560,6 +23702,8 @@ const badPorts = [
   '2049', '3659', '4045', '5060', '5061', '6000', '6566', '6665', '6666', '6667', '6668', '6669', '6697',
   '10080'
 ]
+
+const badPortsSet = new Set(badPorts)
 
 // https://w3c.github.io/webappsec-referrer-policy/#referrer-policies
 const referrerPolicy = [
@@ -23573,10 +23717,12 @@ const referrerPolicy = [
   'strict-origin-when-cross-origin',
   'unsafe-url'
 ]
+const referrerPolicySet = new Set(referrerPolicy)
 
 const requestRedirect = ['follow', 'manual', 'error']
 
 const safeMethods = ['GET', 'HEAD', 'OPTIONS', 'TRACE']
+const safeMethodsSet = new Set(safeMethods)
 
 const requestMode = ['navigate', 'same-origin', 'no-cors', 'cors']
 
@@ -23611,6 +23757,7 @@ const requestDuplex = [
 
 // http://fetch.spec.whatwg.org/#forbidden-method
 const forbiddenMethods = ['CONNECT', 'TRACE', 'TRACK']
+const forbiddenMethodsSet = new Set(forbiddenMethods)
 
 const subresource = [
   'audio',
@@ -23626,6 +23773,7 @@ const subresource = [
   'xslt',
   ''
 ]
+const subresourceSet = new Set(subresource)
 
 /** @type {globalThis['DOMException']} */
 const DOMException = globalThis.DOMException ?? (() => {
@@ -23675,7 +23823,14 @@ module.exports = {
   nullBodyStatus,
   safeMethods,
   badPorts,
-  requestDuplex
+  requestDuplex,
+  subresourceSet,
+  badPortsSet,
+  redirectStatusSet,
+  corsSafeListedMethodsSet,
+  safeMethodsSet,
+  forbiddenMethodsSet,
+  referrerPolicySet
 }
 
 
@@ -24331,6 +24486,7 @@ const { isBlobLike } = __nccwpck_require__(2538)
 const { webidl } = __nccwpck_require__(1744)
 const { parseMIMEType, serializeAMimeType } = __nccwpck_require__(685)
 const { kEnumerableProperty } = __nccwpck_require__(3983)
+const encoder = new TextEncoder()
 
 class File extends Blob {
   constructor (fileBits, fileName, options = {}) {
@@ -24604,7 +24760,7 @@ function processBlobParts (parts, options) {
       }
 
       // 3. Append the result of UTF-8 encoding s to bytes.
-      bytes.push(new TextEncoder().encode(s))
+      bytes.push(encoder.encode(s))
     } else if (
       types.isAnyArrayBuffer(element) ||
       types.isTypedArray(element)
@@ -25602,11 +25758,11 @@ const { kState, kHeaders, kGuard, kRealm } = __nccwpck_require__(5861)
 const assert = __nccwpck_require__(9491)
 const { safelyExtractBody } = __nccwpck_require__(1472)
 const {
-  redirectStatus,
+  redirectStatusSet,
   nullBodyStatus,
-  safeMethods,
+  safeMethodsSet,
   requestBodyHeader,
-  subresource,
+  subresourceSet,
   DOMException
 } = __nccwpck_require__(1037)
 const { kHeadersList } = __nccwpck_require__(2785)
@@ -25618,6 +25774,7 @@ const { TransformStream } = __nccwpck_require__(5356)
 const { getGlobalDispatcher } = __nccwpck_require__(1892)
 const { webidl } = __nccwpck_require__(1744)
 const { STATUS_CODES } = __nccwpck_require__(3685)
+const GET_OR_HEAD = ['GET', 'HEAD']
 
 /** @type {import('buffer').resolveObjectURL} */
 let resolveObjectURL
@@ -25677,7 +25834,7 @@ class Fetch extends EE {
 }
 
 // https://fetch.spec.whatwg.org/#fetch-method
-async function fetch (input, init = {}) {
+function fetch (input, init = {}) {
   webidl.argumentLengthCheck(arguments, 1, { header: 'globalThis.fetch' })
 
   // 1. Let p be a new promise.
@@ -25760,7 +25917,7 @@ async function fetch (input, init = {}) {
   const processResponse = (response) => {
     // 1. If locallyAborted is true, terminate these substeps.
     if (locallyAborted) {
-      return
+      return Promise.resolve()
     }
 
     // 2. If response’s aborted flag is set, then:
@@ -25773,7 +25930,7 @@ async function fetch (input, init = {}) {
       //    deserializedError.
 
       abortFetch(p, request, responseObject, controller.serializedAbortReason)
-      return
+      return Promise.resolve()
     }
 
     // 3. If response is a network error, then reject p with a TypeError
@@ -25782,7 +25939,7 @@ async function fetch (input, init = {}) {
       p.reject(
         Object.assign(new TypeError('fetch failed'), { cause: response.error })
       )
-      return
+      return Promise.resolve()
     }
 
     // 4. Set responseObject to the result of creating a Response object,
@@ -26065,7 +26222,7 @@ function fetching ({
   }
 
   // 15. If request is a subresource request, then:
-  if (subresource.includes(request.destination)) {
+  if (subresourceSet.has(request.destination)) {
     // TODO
   }
 
@@ -26332,13 +26489,13 @@ async function mainFetch (fetchParams, recursive = false) {
 
 // https://fetch.spec.whatwg.org/#concept-scheme-fetch
 // given a fetch params fetchParams
-async function schemeFetch (fetchParams) {
+function schemeFetch (fetchParams) {
   // Note: since the connection is destroyed on redirect, which sets fetchParams to a
   // cancelled state, we do not want this condition to trigger *unless* there have been
   // no redirects. See https://github.com/nodejs/undici/issues/1776
   // 1. If fetchParams is canceled, then return the appropriate network error for fetchParams.
   if (isCancelled(fetchParams) && fetchParams.request.redirectCount === 0) {
-    return makeAppropriateNetworkError(fetchParams)
+    return Promise.resolve(makeAppropriateNetworkError(fetchParams))
   }
 
   // 2. Let request be fetchParams’s request.
@@ -26354,7 +26511,7 @@ async function schemeFetch (fetchParams) {
       // and body is the empty byte sequence as a body.
 
       // Otherwise, return a network error.
-      return makeNetworkError('about scheme is not supported')
+      return Promise.resolve(makeNetworkError('about scheme is not supported'))
     }
     case 'blob:': {
       if (!resolveObjectURL) {
@@ -26367,7 +26524,7 @@ async function schemeFetch (fetchParams) {
       // https://github.com/web-platform-tests/wpt/blob/7b0ebaccc62b566a1965396e5be7bb2bc06f841f/FileAPI/url/resources/fetch-tests.js#L52-L56
       // Buffer.resolveObjectURL does not ignore URL queries.
       if (blobURLEntry.search.length !== 0) {
-        return makeNetworkError('NetworkError when attempting to fetch resource.')
+        return Promise.resolve(makeNetworkError('NetworkError when attempting to fetch resource.'))
       }
 
       const blobURLEntryObject = resolveObjectURL(blobURLEntry.toString())
@@ -26375,7 +26532,7 @@ async function schemeFetch (fetchParams) {
       // 2. If request’s method is not `GET`, blobURLEntry is null, or blobURLEntry’s
       //    object is not a Blob object, then return a network error.
       if (request.method !== 'GET' || !isBlobLike(blobURLEntryObject)) {
-        return makeNetworkError('invalid method')
+        return Promise.resolve(makeNetworkError('invalid method'))
       }
 
       // 3. Let bodyWithType be the result of safely extracting blobURLEntry’s object.
@@ -26402,7 +26559,7 @@ async function schemeFetch (fetchParams) {
 
       response.body = body
 
-      return response
+      return Promise.resolve(response)
     }
     case 'data:': {
       // 1. Let dataURLStruct be the result of running the
@@ -26413,7 +26570,7 @@ async function schemeFetch (fetchParams) {
       // 2. If dataURLStruct is failure, then return a
       //    network error.
       if (dataURLStruct === 'failure') {
-        return makeNetworkError('failed to fetch the data URL')
+        return Promise.resolve(makeNetworkError('failed to fetch the data URL'))
       }
 
       // 3. Let mimeType be dataURLStruct’s MIME type, serialized.
@@ -26422,28 +26579,28 @@ async function schemeFetch (fetchParams) {
       // 4. Return a response whose status message is `OK`,
       //    header list is « (`Content-Type`, mimeType) »,
       //    and body is dataURLStruct’s body as a body.
-      return makeResponse({
+      return Promise.resolve(makeResponse({
         statusText: 'OK',
         headersList: [
           ['content-type', { name: 'Content-Type', value: mimeType }]
         ],
         body: safelyExtractBody(dataURLStruct.body)[0]
-      })
+      }))
     }
     case 'file:': {
       // For now, unfortunate as it is, file URLs are left as an exercise for the reader.
       // When in doubt, return a network error.
-      return makeNetworkError('not implemented... yet...')
+      return Promise.resolve(makeNetworkError('not implemented... yet...'))
     }
     case 'http:':
     case 'https:': {
       // Return the result of running HTTP fetch given fetchParams.
 
-      return await httpFetch(fetchParams)
+      return httpFetch(fetchParams)
         .catch((err) => makeNetworkError(err))
     }
     default: {
-      return makeNetworkError('unknown scheme')
+      return Promise.resolve(makeNetworkError('unknown scheme'))
     }
   }
 }
@@ -26462,7 +26619,7 @@ function finalizeResponse (fetchParams, response) {
 }
 
 // https://fetch.spec.whatwg.org/#fetch-finale
-async function fetchFinale (fetchParams, response) {
+function fetchFinale (fetchParams, response) {
   // 1. If response is a network error, then:
   if (response.type === 'error') {
     // 1. Set response’s URL list to « fetchParams’s request’s URL list[0] ».
@@ -26546,8 +26703,9 @@ async function fetchFinale (fetchParams, response) {
     } else {
       // 4. Otherwise, fully read response’s body given processBody, processBodyError,
       // and fetchParams’s task destination.
-      await fullyReadBody(response.body, processBody, processBodyError)
+      return fullyReadBody(response.body, processBody, processBodyError)
     }
+    return Promise.resolve()
   }
 }
 
@@ -26618,7 +26776,7 @@ async function httpFetch (fetchParams) {
   }
 
   // 8. If actualResponse’s status is a redirect status, then:
-  if (redirectStatus.includes(actualResponse.status)) {
+  if (redirectStatusSet.has(actualResponse.status)) {
     // 1. If actualResponse’s status is not 303, request’s body is not null,
     // and the connection uses HTTP/2, then user agents may, and are even
     // encouraged to, transmit an RST_STREAM frame.
@@ -26655,7 +26813,7 @@ async function httpFetch (fetchParams) {
 }
 
 // https://fetch.spec.whatwg.org/#http-redirect-fetch
-async function httpRedirectFetch (fetchParams, response) {
+function httpRedirectFetch (fetchParams, response) {
   // 1. Let request be fetchParams’s request.
   const request = fetchParams.request
 
@@ -26681,18 +26839,18 @@ async function httpRedirectFetch (fetchParams, response) {
     }
   } catch (err) {
     // 5. If locationURL is failure, then return a network error.
-    return makeNetworkError(err)
+    return Promise.resolve(makeNetworkError(err))
   }
 
   // 6. If locationURL’s scheme is not an HTTP(S) scheme, then return a network
   // error.
   if (!urlIsHttpHttpsScheme(locationURL)) {
-    return makeNetworkError('URL scheme must be a HTTP(S) scheme')
+    return Promise.resolve(makeNetworkError('URL scheme must be a HTTP(S) scheme'))
   }
 
   // 7. If request’s redirect count is 20, then return a network error.
   if (request.redirectCount === 20) {
-    return makeNetworkError('redirect count exceeded')
+    return Promise.resolve(makeNetworkError('redirect count exceeded'))
   }
 
   // 8. Increase request’s redirect count by 1.
@@ -26706,7 +26864,7 @@ async function httpRedirectFetch (fetchParams, response) {
     (locationURL.username || locationURL.password) &&
     !sameOrigin(request, locationURL)
   ) {
-    return makeNetworkError('cross origin not allowed for request mode "cors"')
+    return Promise.resolve(makeNetworkError('cross origin not allowed for request mode "cors"'))
   }
 
   // 10. If request’s response tainting is "cors" and locationURL includes
@@ -26715,9 +26873,9 @@ async function httpRedirectFetch (fetchParams, response) {
     request.responseTainting === 'cors' &&
     (locationURL.username || locationURL.password)
   ) {
-    return makeNetworkError(
+    return Promise.resolve(makeNetworkError(
       'URL cannot contain credentials for request mode "cors"'
-    )
+    ))
   }
 
   // 11. If actualResponse’s status is not 303, request’s body is non-null,
@@ -26727,7 +26885,7 @@ async function httpRedirectFetch (fetchParams, response) {
     request.body != null &&
     request.body.source == null
   ) {
-    return makeNetworkError()
+    return Promise.resolve(makeNetworkError())
   }
 
   // 12. If one of the following is true
@@ -26736,7 +26894,7 @@ async function httpRedirectFetch (fetchParams, response) {
   if (
     ([301, 302].includes(actualResponse.status) && request.method === 'POST') ||
     (actualResponse.status === 303 &&
-      !['GET', 'HEAD'].includes(request.method))
+      !GET_OR_HEAD.includes(request.method))
   ) {
     // then:
     // 1. Set request’s method to `GET` and request’s body to null.
@@ -27020,7 +27178,7 @@ async function httpNetworkOrCacheFetch (
     // responses in httpCache, as per the "Invalidation" chapter of HTTP
     // Caching, and set storedResponse to null. [HTTP-CACHING]
     if (
-      !safeMethods.includes(httpRequest.method) &&
+      !safeMethodsSet.has(httpRequest.method) &&
       forwardResponse.status >= 200 &&
       forwardResponse.status <= 399
     ) {
@@ -27580,7 +27738,7 @@ async function httpNetworkFetch (
 
           const willFollow = request.redirect === 'follow' &&
             location &&
-            redirectStatus.includes(status)
+            redirectStatusSet.has(status)
 
           // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Encoding
           if (request.method !== 'HEAD' && request.method !== 'CONNECT' && !nullBodyStatus.includes(status) && !willFollow) {
@@ -27720,8 +27878,8 @@ const {
   makePolicyContainer
 } = __nccwpck_require__(2538)
 const {
-  forbiddenMethods,
-  corsSafeListedMethods,
+  forbiddenMethodsSet,
+  corsSafeListedMethodsSet,
   referrerPolicy,
   requestRedirect,
   requestMode,
@@ -28026,7 +28184,7 @@ class Request {
         throw TypeError(`'${init.method}' is not a valid HTTP method.`)
       }
 
-      if (forbiddenMethods.indexOf(method.toUpperCase()) !== -1) {
+      if (forbiddenMethodsSet.has(method.toUpperCase())) {
         throw TypeError(`'${init.method}' HTTP method is unsupported.`)
       }
 
@@ -28111,7 +28269,7 @@ class Request {
     if (mode === 'no-cors') {
       // 1. If this’s request’s method is not a CORS-safelisted method,
       // then throw a TypeError.
-      if (!corsSafeListedMethods.includes(request.method)) {
+      if (!corsSafeListedMethodsSet.has(request.method)) {
         throw new TypeError(
           `'${request.method} is unsupported in no-cors mode.`
         )
@@ -28673,7 +28831,7 @@ const {
   isomorphicEncode
 } = __nccwpck_require__(2538)
 const {
-  redirectStatus,
+  redirectStatusSet,
   nullBodyStatus,
   DOMException
 } = __nccwpck_require__(1037)
@@ -28687,6 +28845,7 @@ const assert = __nccwpck_require__(9491)
 const { types } = __nccwpck_require__(3837)
 
 const ReadableStream = globalThis.ReadableStream || (__nccwpck_require__(5356).ReadableStream)
+const textEncoder = new TextEncoder('utf-8')
 
 // https://fetch.spec.whatwg.org/#response-class
 class Response {
@@ -28716,7 +28875,7 @@ class Response {
     }
 
     // 1. Let bytes the result of running serialize a JavaScript value to JSON bytes on data.
-    const bytes = new TextEncoder('utf-8').encode(
+    const bytes = textEncoder.encode(
       serializeJavascriptValueToJSONString(data)
     )
 
@@ -28761,7 +28920,7 @@ class Response {
     }
 
     // 3. If status is not a redirect status, then throw a RangeError.
-    if (!redirectStatus.includes(status)) {
+    if (!redirectStatusSet.has(status)) {
       throw new RangeError('Invalid status code ' + status)
     }
 
@@ -29259,7 +29418,7 @@ module.exports = {
 "use strict";
 
 
-const { redirectStatus, badPorts, referrerPolicy: referrerPolicyTokens } = __nccwpck_require__(1037)
+const { redirectStatusSet, referrerPolicySet: referrerPolicyTokens, badPortsSet } = __nccwpck_require__(1037)
 const { getGlobalOrigin } = __nccwpck_require__(1246)
 const { performance } = __nccwpck_require__(4074)
 const { isBlobLike, toUSVString, ReadableStreamFrom } = __nccwpck_require__(3983)
@@ -29288,7 +29447,7 @@ function responseURL (response) {
 // https://fetch.spec.whatwg.org/#concept-response-location-url
 function responseLocationURL (response, requestFragment) {
   // 1. If response’s status is not a redirect status, then return null.
-  if (!redirectStatus.includes(response.status)) {
+  if (!redirectStatusSet.has(response.status)) {
     return null
   }
 
@@ -29323,7 +29482,7 @@ function requestBadPort (request) {
 
   // 2. If url’s scheme is an HTTP(S) scheme and url’s port is a bad port,
   // then return blocked.
-  if (urlIsHttpHttpsScheme(url) && badPorts.includes(url.port)) {
+  if (urlIsHttpHttpsScheme(url) && badPortsSet.has(url.port)) {
     return 'blocked'
   }
 
@@ -29465,7 +29624,7 @@ function setRequestReferrerPolicyOnRedirect (request, actualResponse) {
     // The left-most policy is the fallback.
     for (let i = policyHeader.length; i !== 0; i--) {
       const token = policyHeader[i - 1].trim()
-      if (referrerPolicyTokens.includes(token)) {
+      if (referrerPolicyTokens.has(token)) {
         policy = token
         break
       }
@@ -34234,7 +34393,7 @@ class Pool extends PoolBase {
         maxCachedSessions,
         allowH2,
         socketPath,
-        timeout: connectTimeout == null ? 10e3 : connectTimeout,
+        timeout: connectTimeout,
         ...(util.nodeHasAutoSelectFamily && autoSelectFamily ? { autoSelectFamily, autoSelectFamilyAttemptTimeout } : undefined),
         ...connect
       })
@@ -36565,7 +36724,7 @@ function getUserAgent() {
     return navigator.userAgent;
   }
 
-  if (typeof process === "object" && "version" in process) {
+  if (typeof process === "object" && process.version !== undefined) {
     return `Node.js/${process.version.substr(1)} (${process.platform}; ${process.arch})`;
   }
 
