@@ -4,8 +4,9 @@ author: 'WtfJoke (Manuel)'
 
 inputs:
   github-token:
-    required: true
+    required: false
     description: 'The GITHUB_TOKEN secret. Used for querying tectonic releases'
+    default: ${{ github.token }}
   tectonic-version: 
     required: false
     description: 'The version of tectonic to install. A value of `latest` will install the latest version of tectonic. Defaults to `latest`.'
