@@ -1,5 +1,5 @@
-import * as core from '@actions/core'
-import * as tc from '@actions/tool-cache'
+import {debug} from '@actions/core'
+import {downloadTool, extractZip, extractTar} from '@actions/tool-cache'
 import os from 'os'
 import {BIBER_DL_BASE_PATH, BINARIES, DOWNLOAD} from './constants'
 import {coerce, satisfies} from 'semver'
@@ -8,7 +8,7 @@ export const validBiberVersion = (biberVersion: string) => {
   const biberSemVer = coerce(biberVersion)
 
   if (biberSemVer === null) {
-    core.debug(
+    debug(
       `Invalid biber version: "${biberVersion}". Defaulting to latest version`
     )
     return 'current'
@@ -17,7 +17,7 @@ export const validBiberVersion = (biberVersion: string) => {
     return biberSemVer.version
   }
 
-  return `${biberSemVer.major}.${biberSemVer.minor}`
+  return `${biberSemVer.major.toFixed()}.${biberSemVer.minor.toFixed()}`
 }
 
 export const downloadBiber = async (biberVersion: string) => {
@@ -25,19 +25,18 @@ export const downloadBiber = async (biberVersion: string) => {
   const platform = os.platform()
   const fileName = mapOsToFileName(platform)
   const url = buildDownloadURL(validVersion, fileName, platform)
-  core.debug(`Downloading Biber from ${url}`)
-  const archivePath = await tc.downloadTool(url)
+  debug(`Downloading Biber from ${url}`)
+  const archivePath = await downloadTool(url)
 
-  core.debug('Extracting Biber')
+  debug('Extracting Biber')
   let biberPath
   if (fileName.endsWith('.zip')) {
-    biberPath = await tc.extractZip(archivePath)
+    biberPath = await extractZip(archivePath)
   } else if (fileName.endsWith('.tar.gz')) {
-    biberPath = await tc.extractTar(archivePath)
+    biberPath = await extractTar(archivePath)
   }
 
-  core.debug(`Biber path is ${biberPath}`)
-
+  debug(`Biber path is ${biberPath ?? 'undefined'}`)
   if (!archivePath || !biberPath) {
     throw new Error(`Unable to download biber from ${url}`)
   }
@@ -84,6 +83,4 @@ const mapOsToFileName = (platform: string) => {
  * @returns true if using the new naming scheme
  */
 const isUsingNewMacOsNaming = (version: string) =>
-  version === 'current' ||
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  satisfies(coerce(version)!, '>=2.17')
+  version === 'current' || satisfies(coerce(version)!, '>=2.17')

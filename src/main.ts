@@ -1,4 +1,4 @@
-import * as core from '@actions/core'
+import {setFailed} from '@actions/core'
 import {setUpTectonic} from './setup-tectonic'
 
 const run = async () => {
@@ -7,11 +7,11 @@ const run = async () => {
   } catch (error: unknown) {
     if (error instanceof Error || typeof error === 'string') {
       const message = error instanceof Error ? error.message : error
-      core.setFailed(message)
+      setFailed(message)
     } else {
-      core.setFailed('Unknown error')
+      setFailed('Unknown error')
     }
   }
 }
 
-run()
+void run()

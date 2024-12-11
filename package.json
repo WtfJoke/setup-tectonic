@@ -36,13 +36,13 @@
   "devDependencies": {
     "@octokit/types": "13.6.2",
     "@types/jest": "29.5.14",
-    "@types/node": "22.10.1",
+    "@types/node": "22.10.2",
     "@types/semver": "7.5.8",
     "@types/uuid": "10.0.0",
-    "@typescript-eslint/eslint-plugin": "7.18.0",
-    "@typescript-eslint/parser": "7.18.0",
+    "@typescript-eslint/eslint-plugin": "8.18.0",
+    "@typescript-eslint/parser": "8.18.0",
     "@vercel/ncc": "0.38.3",
-    "eslint": "8.57.1",
+    "eslint": "9.16.0",
     "eslint-plugin-github": "5.1.4",
     "eslint-plugin-jest": "28.9.0",
     "eslint-plugin-prettier": "5.2.1",
@@ -52,6 +52,6 @@
     "prettier": "3.4.2",
     "ts-jest": "29.2.5",
     "typescript": "5.7.2",
-    "webpack": "5.96.1"
+    "webpack": "5.97.1"
   }
 }

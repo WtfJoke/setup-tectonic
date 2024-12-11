@@ -1,9 +1,9 @@
-import * as core from '@actions/core'
-import * as fs from 'fs'
-import * as io from '@actions/io'
-import * as os from 'os'
-import * as path from 'path'
-import * as tc from '@actions/tool-cache'
+import {debug, getInput, addPath, error} from '@actions/core'
+import {chmodSync} from 'fs'
+import {mv, mkdirP} from '@actions/io'
+import {platform as os_platform} from 'os'
+import {resolve, join, dirname} from 'path'
+import {downloadTool, extractZip, extractTar} from '@actions/tool-cache'
 
 import {downloadBiber} from './biber'
 import {getTectonicRelease} from './release'
@@ -17,21 +17,20 @@ const mapOS = (osKey: string) => {
 }
 
 const downloadTectonic = async (url: string) => {
-  core.debug(`Downloading Tectonic from ${url}`)
-  const archivePath = await tc.downloadTool(url)
+  debug(`Downloading Tectonic from ${url}`)
+  const archivePath = await downloadTool(url)
 
-  core.debug('Extracting Tectonic')
+  debug('Extracting Tectonic')
   let tectonicPath
   if (url.endsWith('.zip')) {
-    tectonicPath = await tc.extractZip(archivePath)
+    tectonicPath = await extractZip(archivePath)
   } else if (url.endsWith('.tar.gz')) {
-    tectonicPath = await tc.extractTar(archivePath)
+    tectonicPath = await extractTar(archivePath)
   } else if (url.endsWith('.AppImage')) {
     tectonicPath = await createPathForAppImage(archivePath)
   }
 
-  core.debug(`Tectonic path is ${tectonicPath}`)
-
+  debug(`Tectonic path is ${tectonicPath ?? 'undefined'}`)
   if (!archivePath || !tectonicPath) {
     throw new Error(`Unable to download tectonic from ${url}`)
   }
@@ -41,36 +40,34 @@ const downloadTectonic = async (url: string) => {
 
 const createPathForAppImage = async (appPath: string) => {
   const tectonicPath = await createTempFolder(appPath)
-  const newAppPath = path.resolve(tectonicPath, 'tectonic')
-  await io.mv(appPath, newAppPath)
+  const newAppPath = resolve(tectonicPath, 'tectonic')
+  await mv(appPath, newAppPath)
 
-  core.debug(`Moved Tectonic from ${appPath} to ${newAppPath}`)
+  debug(`Moved Tectonic from ${appPath} to ${newAppPath}`)
 
   // make it executable
-  fs.chmodSync(newAppPath, '750')
+  chmodSync(newAppPath, '750')
 
   return tectonicPath
 }
 
 const createTempFolder = async (pathToExecutable: string) => {
-  const destFolder = path.join(path.dirname(pathToExecutable), randomUUID())
-  await io.mkdirP(destFolder)
+  const destFolder = join(dirname(pathToExecutable), randomUUID())
+  await mkdirP(destFolder)
   return destFolder
 }
 
 export const setUpTectonic = async () => {
   try {
-    const githubToken = core.getInput('github-token', {required: true})
-    const version = core.getInput('tectonic-version')
-    const biberVersion = core.getInput('biber-version')
+    const githubToken = getInput('github-token', {required: true})
+    const version = getInput('tectonic-version')
+    const biberVersion = getInput('biber-version')
 
-    core.debug(`Finding releases for Tectonic version ${version}`)
+    debug(`Finding releases for Tectonic version ${version}`)
     const release = await getTectonicRelease(githubToken, version)
-    const platform = mapOS(os.platform())
-    core.debug(
-      `Getting build for Tectonic version ${release.version}: ${platform}`
-    )
-    core.debug(`Release: ${JSON.stringify(release)}`)
+    const platform = mapOS(os_platform())
+    debug(`Getting build for Tectonic version ${release.version}: ${platform}`)
+    debug(`Release: ${JSON.stringify(release)}`)
     const asset = release.getAsset(platform)
     if (!asset) {
       throw new Error(
@@ -80,20 +77,20 @@ export const setUpTectonic = async () => {
 
     const tectonicPath = await downloadTectonic(asset.url)
 
-    core.addPath(tectonicPath)
+    addPath(tectonicPath)
 
     if (biberVersion) {
       // optionally download biber
-      core.debug(`Biber version: ${biberVersion}`)
+      debug(`Biber version: ${biberVersion}`)
       const biberPath = await downloadBiber(biberVersion)
-      core.addPath(biberPath)
+      addPath(biberPath)
     }
 
     return release
-  } catch (error: unknown) {
-    if (error instanceof Error || typeof error === 'string') {
-      core.error(error)
+  } catch (exception: unknown) {
+    if (exception instanceof Error || typeof exception === 'string') {
+      error(exception)
     }
-    throw error
+    throw exception
   }
 }

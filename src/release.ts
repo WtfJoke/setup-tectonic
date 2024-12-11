@@ -54,16 +54,15 @@ export const getTectonicRelease = async (
   const validVersion = valid(version)
 
   if (validVersion) {
-    const {data: releaseData, status} = await octo.rest.repos.getReleaseByTag({
+    const {data: releaseData} = await octo.rest.repos.getReleaseByTag({
       owner: REPO_OWNER,
       repo: TECTONIC,
       tag: `${RELEASE_TAG_IDENTIFIER}${validVersion}`
     })
-    if (status === 200) {
-      const {id, tag_name, name, assets} = releaseData
 
-      return new Release(id, tag_name, asReleaseAsset(assets), name)
-    }
+    const {id, tag_name, name, assets} = releaseData
+
+    return new Release(id, tag_name, asReleaseAsset(assets), name)
   }
   return getLatestRelease(octo)
 }
