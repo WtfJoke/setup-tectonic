@@ -59,7 +59,7 @@ const createTempFolder = async (pathToExecutable: string) => {
 
 export const setUpTectonic = async () => {
   try {
-    const githubToken = getInput('github-token', {required: true})
+    const githubToken = getInput('github-token')
     const version = getInput('tectonic-version')
     const biberVersion = getInput('biber-version')
 

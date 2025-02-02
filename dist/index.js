@@ -37009,7 +37009,7 @@ const createTempFolder = async (pathToExecutable) => {
 };
 const setUpTectonic = async () => {
     try {
-        const githubToken = (0,core.getInput)('github-token', { required: true });
+        const githubToken = (0,core.getInput)('github-token');
         const version = (0,core.getInput)('tectonic-version');
         const biberVersion = (0,core.getInput)('biber-version');
         (0,core.debug)(`Finding releases for Tectonic version ${version}`);
