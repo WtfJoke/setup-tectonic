@@ -21,7 +21,8 @@ export default tseslint.config(
     {
         rules: {
             "i18n-text/no-en": "off", // I log only english messages and this is a library/user-facing.
-            "importPlugin/no-unresolved": "off" // This seems to work in typescript only with additional configuration.
+            "import/no-unresolved": "off", // This seems to work in typescript only with additional configuration.
+            "import/extensions": "error", // Extensions are needed in esm.
         }
     },
     {

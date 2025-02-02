@@ -5,15 +5,15 @@ import {platform as os_platform} from 'os'
 import {resolve, join, dirname} from 'path'
 import {downloadTool, extractZip, extractTar} from '@actions/tool-cache'
 
-import {downloadBiber} from './biber'
-import {getTectonicRelease} from './release'
+import {downloadBiber} from './biber.js'
+import {getTectonicRelease} from './release.js'
 import {randomUUID} from 'crypto'
 
 const mapOS = (osKey: string) => {
   const mappings: Record<string, string> = {
     win32: 'windows'
   }
-  return mappings[osKey] || osKey
+  return mappings[osKey] ?? osKey
 }
 
 const downloadTectonic = async (url: string) => {

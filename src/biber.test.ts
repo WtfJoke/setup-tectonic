@@ -1,4 +1,4 @@
-import {buildDownloadURL, downloadBiber, validBiberVersion} from './biber'
+import {buildDownloadURL, downloadBiber, validBiberVersion} from './biber.js'
 import {existsSync} from 'fs'
 import {join, resolve} from 'path'
 import {platform} from 'os'

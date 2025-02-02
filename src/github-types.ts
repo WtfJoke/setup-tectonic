@@ -1,6 +1,6 @@
 import type {Endpoints} from '@octokit/types'
-import {GitHub} from '@actions/github/lib/utils'
+import type {getOctokit} from '@actions/github'
 
 export type GithubReleaseAssets =
   Endpoints['GET /repos/{owner}/{repo}/releases/{release_id}']['response']['data']['assets']
-export type GithubOktokit = InstanceType<typeof GitHub>
+export type GithubOktokit = ReturnType<typeof getOctokit>

@@ -1,4 +1,4 @@
-import {Release, ReleaseAsset} from './release'
+import {Release, type ReleaseAsset} from './release.js'
 
 describe('release', () => {
   const tectonic012Assets: ReleaseAsset[] = [

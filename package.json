@@ -3,7 +3,8 @@
   "version": "1.1.0",
   "private": true,
   "description": "Sets up Tectonic for Github Actions",
-  "main": "lib/main.js",
+  "main": "lib/src/main.js",
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "format": "prettier --write **/*.ts",

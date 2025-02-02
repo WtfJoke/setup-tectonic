@@ -1,7 +1,7 @@
 import {debug} from '@actions/core'
 import {downloadTool, extractZip, extractTar} from '@actions/tool-cache'
 import os from 'os'
-import {BIBER_DL_BASE_PATH, BINARIES, DOWNLOAD} from './constants'
+import {BIBER_DL_BASE_PATH, BINARIES, DOWNLOAD} from './constants.js'
 import {coerce, satisfies} from 'semver'
 
 export const validBiberVersion = (biberVersion: string) => {
@@ -64,16 +64,20 @@ const mapOsToIdentifier = (platform: string, version: string) => {
     darwin: isUsingNewMacOsNaming(version) ? 'MacOS' : 'OSX_Intel',
     linux: 'Linux'
   }
-  return mappings[platform] || platform
+  return mappings[platform] ?? platform
 }
 
-const mapOsToFileName = (platform: string) => {
+const mapOsToFileName = (platform: string): string => {
   const platformFileNames: Record<string, string> = {
     win32: 'biber-MSWIN64.zip',
     darwin: 'biber-darwin_x86_64.tar.gz',
     linux: 'biber-linux_x86_64.tar.gz'
   }
-  return platformFileNames[platform]
+  const fileName = platformFileNames[platform]
+  if (!fileName) {
+    throw new Error(`Unsupported platform for biber: ${platform}`)
+  }
+  return fileName
 }
 
 /**
