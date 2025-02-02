@@ -1,339 +1,9 @@
-require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
-/******/ 	var __webpack_modules__ = ({
-
-/***/ 6858:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.buildDownloadURL = exports.downloadBiber = exports.validBiberVersion = void 0;
-const core_1 = __nccwpck_require__(7484);
-const tool_cache_1 = __nccwpck_require__(3472);
-const os_1 = __importDefault(__nccwpck_require__(857));
-const constants_1 = __nccwpck_require__(8729);
-const semver_1 = __nccwpck_require__(2088);
-const validBiberVersion = (biberVersion) => {
-    const biberSemVer = (0, semver_1.coerce)(biberVersion);
-    if (biberSemVer === null) {
-        (0, core_1.debug)(`Invalid biber version: "${biberVersion}". Defaulting to latest version`);
-        return 'current';
-    }
-    if (biberSemVer.patch !== 0) {
-        return biberSemVer.version;
-    }
-    return `${biberSemVer.major.toFixed()}.${biberSemVer.minor.toFixed()}`;
-};
-exports.validBiberVersion = validBiberVersion;
-const downloadBiber = (biberVersion) => __awaiter(void 0, void 0, void 0, function* () {
-    const validVersion = (0, exports.validBiberVersion)(biberVersion);
-    const platform = os_1.default.platform();
-    const fileName = mapOsToFileName(platform);
-    const url = (0, exports.buildDownloadURL)(validVersion, fileName, platform);
-    (0, core_1.debug)(`Downloading Biber from ${url}`);
-    const archivePath = yield (0, tool_cache_1.downloadTool)(url);
-    (0, core_1.debug)('Extracting Biber');
-    let biberPath;
-    if (fileName.endsWith('.zip')) {
-        biberPath = yield (0, tool_cache_1.extractZip)(archivePath);
-    }
-    else if (fileName.endsWith('.tar.gz')) {
-        biberPath = yield (0, tool_cache_1.extractTar)(archivePath);
-    }
-    (0, core_1.debug)(`Biber path is ${biberPath !== null && biberPath !== void 0 ? biberPath : 'undefined'}`);
-    if (!archivePath || !biberPath) {
-        throw new Error(`Unable to download biber from ${url}`);
-    }
-    return biberPath;
-});
-exports.downloadBiber = downloadBiber;
-const buildDownloadURL = (version, fileName, platform) => [
-    constants_1.BIBER_DL_BASE_PATH,
-    version,
-    constants_1.BINARIES,
-    mapOsToIdentifier(platform, version),
-    fileName,
-    constants_1.DOWNLOAD
-].join('/');
-exports.buildDownloadURL = buildDownloadURL;
-const mapOsToIdentifier = (platform, version) => {
-    const mappings = {
-        win32: 'Windows',
-        darwin: isUsingNewMacOsNaming(version) ? 'MacOS' : 'OSX_Intel',
-        linux: 'Linux'
-    };
-    return mappings[platform] || platform;
-};
-const mapOsToFileName = (platform) => {
-    const platformFileNames = {
-        win32: 'biber-MSWIN64.zip',
-        darwin: 'biber-darwin_x86_64.tar.gz',
-        linux: 'biber-linux_x86_64.tar.gz'
-    };
-    return platformFileNames[platform];
-};
-/**
- * Versions beginning with 2.17 uses 'MacOS' instead of 'OSX_Intel' as their platform identifier.
- * @see https://sourceforge.net/projects/biblatex-biber/files/biblatex-biber/2.17/ compared to https://sourceforge.net/projects/biblatex-biber/files/biblatex-biber/2.16/
- * @param version - the validated biber version (semver or 'current')
- * @returns true if using the new naming scheme
- */
-const isUsingNewMacOsNaming = (version) => version === 'current' || (0, semver_1.satisfies)((0, semver_1.coerce)(version), '>=2.17');
-
-
-/***/ }),
-
-/***/ 8729:
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.DOWNLOAD = exports.BINARIES = exports.BIBER_DL_BASE_PATH = exports.TECTONIC = exports.REPO_OWNER = exports.RELEASE_TAG_IDENTIFIER = void 0;
-exports.RELEASE_TAG_IDENTIFIER = 'tectonic@';
-exports.REPO_OWNER = 'tectonic-typesetting';
-exports.TECTONIC = 'tectonic';
-exports.BIBER_DL_BASE_PATH = 'https://sourceforge.net/projects/biblatex-biber/files/biblatex-biber';
-exports.BINARIES = 'binaries';
-exports.DOWNLOAD = 'download';
-
-
-/***/ }),
-
-/***/ 5915:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-const core_1 = __nccwpck_require__(7484);
-const setup_tectonic_1 = __nccwpck_require__(1719);
-const run = () => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        yield (0, setup_tectonic_1.setUpTectonic)();
-    }
-    catch (error) {
-        if (error instanceof Error || typeof error === 'string') {
-            const message = error instanceof Error ? error.message : error;
-            (0, core_1.setFailed)(message);
-        }
-        else {
-            (0, core_1.setFailed)('Unknown error');
-        }
-    }
-});
-void run();
-
-
-/***/ }),
-
-/***/ 9437:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.getTectonicRelease = exports.Release = void 0;
-const constants_1 = __nccwpck_require__(8729);
-const github_1 = __nccwpck_require__(3228);
-const semver_1 = __nccwpck_require__(2088);
-class Release {
-    constructor(id, tagName, assets, name) {
-        this.id = id;
-        this.name = name;
-        this.version = tagName.replace(constants_1.RELEASE_TAG_IDENTIFIER, '');
-        this.semVerVersion = (0, semver_1.coerce)(this.version);
-        this.tagName = tagName;
-        this.assets = assets;
-    }
-    getAsset(platform) {
-        const versionPrefix = `tectonic-${this.version}-x86_64`;
-        const favourLinuxAppImage = this.semVerVersion != null && this.semVerVersion.minor <= 10;
-        const platformFileNames = {
-            windows: `${versionPrefix}-pc-${platform}-msvc.zip`,
-            darwin: `${versionPrefix}-apple-${platform}.tar.gz`,
-            linux: favourLinuxAppImage
-                ? `${versionPrefix}.AppImage`
-                : `${versionPrefix}-unknown-linux-gnu.tar.gz`
-        };
-        const fileName = platformFileNames[platform];
-        return this.assets.find(ghAsset => ghAsset.name === fileName);
-    }
-}
-exports.Release = Release;
-const getTectonicRelease = (githubToken, version) => __awaiter(void 0, void 0, void 0, function* () {
-    const octo = (0, github_1.getOctokit)(githubToken);
-    const validVersion = (0, semver_1.valid)(version);
-    if (validVersion) {
-        const { data: releaseData } = yield octo.rest.repos.getReleaseByTag({
-            owner: constants_1.REPO_OWNER,
-            repo: constants_1.TECTONIC,
-            tag: `${constants_1.RELEASE_TAG_IDENTIFIER}${validVersion}`
-        });
-        const { id, tag_name, name, assets } = releaseData;
-        return new Release(id, tag_name, asReleaseAsset(assets), name);
-    }
-    return getLatestRelease(octo);
-});
-exports.getTectonicRelease = getTectonicRelease;
-const getLatestRelease = (octo) => __awaiter(void 0, void 0, void 0, function* () {
-    const releases = yield octo.rest.repos.listReleases({
-        owner: constants_1.REPO_OWNER,
-        repo: constants_1.TECTONIC
-    });
-    const release = releases.data.find(currentRelease => currentRelease.tag_name.startsWith(constants_1.RELEASE_TAG_IDENTIFIER));
-    if (release) {
-        return new Release(release.id, release.tag_name, asReleaseAsset(release.assets), release.name);
-    }
-    else {
-        throw new Error('Couldnt get latest tectonic release');
-    }
-});
-const asReleaseAsset = (assets) => {
-    return assets.map(ghAsset => ({
-        name: ghAsset.name,
-        url: ghAsset.browser_download_url
-    }));
-};
-
-
-/***/ }),
-
-/***/ 1719:
-/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.setUpTectonic = void 0;
-const core_1 = __nccwpck_require__(7484);
-const fs_1 = __nccwpck_require__(9896);
-const io_1 = __nccwpck_require__(4994);
-const os_1 = __nccwpck_require__(857);
-const path_1 = __nccwpck_require__(6928);
-const tool_cache_1 = __nccwpck_require__(3472);
-const biber_1 = __nccwpck_require__(6858);
-const release_1 = __nccwpck_require__(9437);
-const crypto_1 = __nccwpck_require__(6982);
-const mapOS = (osKey) => {
-    const mappings = {
-        win32: 'windows'
-    };
-    return mappings[osKey] || osKey;
-};
-const downloadTectonic = (url) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, core_1.debug)(`Downloading Tectonic from ${url}`);
-    const archivePath = yield (0, tool_cache_1.downloadTool)(url);
-    (0, core_1.debug)('Extracting Tectonic');
-    let tectonicPath;
-    if (url.endsWith('.zip')) {
-        tectonicPath = yield (0, tool_cache_1.extractZip)(archivePath);
-    }
-    else if (url.endsWith('.tar.gz')) {
-        tectonicPath = yield (0, tool_cache_1.extractTar)(archivePath);
-    }
-    else if (url.endsWith('.AppImage')) {
-        tectonicPath = yield createPathForAppImage(archivePath);
-    }
-    (0, core_1.debug)(`Tectonic path is ${tectonicPath !== null && tectonicPath !== void 0 ? tectonicPath : 'undefined'}`);
-    if (!archivePath || !tectonicPath) {
-        throw new Error(`Unable to download tectonic from ${url}`);
-    }
-    return tectonicPath;
-});
-const createPathForAppImage = (appPath) => __awaiter(void 0, void 0, void 0, function* () {
-    const tectonicPath = yield createTempFolder(appPath);
-    const newAppPath = (0, path_1.resolve)(tectonicPath, 'tectonic');
-    yield (0, io_1.mv)(appPath, newAppPath);
-    (0, core_1.debug)(`Moved Tectonic from ${appPath} to ${newAppPath}`);
-    // make it executable
-    (0, fs_1.chmodSync)(newAppPath, '750');
-    return tectonicPath;
-});
-const createTempFolder = (pathToExecutable) => __awaiter(void 0, void 0, void 0, function* () {
-    const destFolder = (0, path_1.join)((0, path_1.dirname)(pathToExecutable), (0, crypto_1.randomUUID)());
-    yield (0, io_1.mkdirP)(destFolder);
-    return destFolder;
-});
-const setUpTectonic = () => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const githubToken = (0, core_1.getInput)('github-token', { required: true });
-        const version = (0, core_1.getInput)('tectonic-version');
-        const biberVersion = (0, core_1.getInput)('biber-version');
-        (0, core_1.debug)(`Finding releases for Tectonic version ${version}`);
-        const release = yield (0, release_1.getTectonicRelease)(githubToken, version);
-        const platform = mapOS((0, os_1.platform)());
-        (0, core_1.debug)(`Getting build for Tectonic version ${release.version}: ${platform}`);
-        (0, core_1.debug)(`Release: ${JSON.stringify(release)}`);
-        const asset = release.getAsset(platform);
-        if (!asset) {
-            throw new Error(`Tectonic version ${version} not available for ${platform}`);
-        }
-        const tectonicPath = yield downloadTectonic(asset.url);
-        (0, core_1.addPath)(tectonicPath);
-        if (biberVersion) {
-            // optionally download biber
-            (0, core_1.debug)(`Biber version: ${biberVersion}`);
-            const biberPath = yield (0, biber_1.downloadBiber)(biberVersion);
-            (0, core_1.addPath)(biberPath);
-        }
-        return release;
-    }
-    catch (exception) {
-        if (exception instanceof Error || typeof exception === 'string') {
-            (0, core_1.error)(exception);
-        }
-        throw exception;
-    }
-});
-exports.setUpTectonic = setUpTectonic;
-
-
-/***/ }),
+import './sourcemap-register.cjs';import { createRequire as __WEBPACK_EXTERNAL_createRequire } from "module";
+/******/ var __webpack_modules__ = ({
 
 /***/ 4914:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -436,7 +106,6 @@ function escapeProperty(s) {
 /***/ 7484:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -787,7 +456,6 @@ exports.platform = __importStar(__nccwpck_require__(8968));
 /***/ 4753:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 // For internal use, subject to change.
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -856,7 +524,6 @@ exports.prepareKeyValueMessage = prepareKeyValueMessage;
 /***/ 5306:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -940,7 +607,6 @@ exports.OidcClient = OidcClient;
 /***/ 1976:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -1009,7 +675,6 @@ exports.toPlatformPath = toPlatformPath;
 /***/ 8968:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -1110,7 +775,6 @@ exports.getDetails = getDetails;
 /***/ 1847:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -1400,7 +1064,6 @@ exports.summary = _summary;
 /***/ 302:
 /***/ ((__unused_webpack_module, exports) => {
 
-"use strict";
 
 // We use any as a valid input type
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -1447,7 +1110,6 @@ exports.toCommandProperties = toCommandProperties;
 /***/ 5236:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -1557,7 +1219,6 @@ exports.getExecOutput = getExecOutput;
 /***/ 6665:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -2182,7 +1843,6 @@ class ExecState extends events.EventEmitter {
 /***/ 1648:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
-"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.Context = void 0;
@@ -2244,7 +1904,6 @@ exports.Context = Context;
 /***/ 3228:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -2292,7 +1951,6 @@ exports.getOctokit = getOctokit;
 /***/ 5156:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -2369,7 +2027,6 @@ exports.getApiBaseUrl = getApiBaseUrl;
 /***/ 8006:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -2435,7 +2092,6 @@ exports.getOctokitOptions = getOctokitOptions;
 /***/ 4552:
 /***/ (function(__unused_webpack_module, exports) {
 
-"use strict";
 
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -2523,7 +2179,6 @@ exports.PersonalAccessTokenCredentialHandler = PersonalAccessTokenCredentialHand
 /***/ 4844:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
@@ -3182,7 +2837,6 @@ const lowercaseKeys = (obj) => Object.keys(obj).reduce((c, k) => ((c[k.toLowerCa
 /***/ 4988:
 /***/ ((__unused_webpack_module, exports) => {
 
-"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.checkBypass = exports.getProxyUrl = void 0;
@@ -3284,7 +2938,6 @@ class DecodedURL extends URL {
 /***/ 5207:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -3474,7 +3127,6 @@ exports.getCmdPath = getCmdPath;
 /***/ 4994:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -3780,7 +3432,6 @@ function copyFile(srcFile, destFile, force) {
 /***/ 8036:
 /***/ (function(module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -3916,7 +3567,6 @@ exports._readLinuxVersionFile = _readLinuxVersionFile;
 /***/ 7380:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -4010,7 +3660,6 @@ exports.RetryHelper = RetryHelper;
 /***/ 3472:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
-"use strict";
 
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -6333,7 +5982,6 @@ function coerce (version, options) {
 /***/ 7864:
 /***/ ((module) => {
 
-"use strict";
 
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -6418,7 +6066,6 @@ var createTokenAuth = function createTokenAuth2(token) {
 /***/ 1897:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -6587,7 +6234,6 @@ var Octokit = class {
 /***/ 4471:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -6971,7 +6617,6 @@ var endpoint = withDefaults(null, DEFAULTS);
 /***/ 7:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -7129,7 +6774,6 @@ function withCustomRequest(customRequest) {
 /***/ 8082:
 /***/ ((module) => {
 
-"use strict";
 
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -7530,7 +7174,6 @@ paginateRest.VERSION = VERSION;
 /***/ 4935:
 /***/ ((module) => {
 
-"use strict";
 
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -9700,7 +9343,6 @@ legacyRestEndpointMethods.VERSION = VERSION;
 /***/ 3708:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 var __create = Object.create;
 var __defProp = Object.defineProperty;
@@ -9798,7 +9440,6 @@ var RequestError = class extends Error {
 /***/ 8636:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -10209,7 +9850,6 @@ function removeHook(state, name, method) {
 /***/ 4150:
 /***/ ((__unused_webpack_module, exports) => {
 
-"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
@@ -12851,7 +12491,6 @@ module.exports = __nccwpck_require__(218);
 /***/ 218:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 var net = __nccwpck_require__(9278);
@@ -13123,7 +12762,6 @@ exports.debug = debug; // for test
 /***/ 6752:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const Client = __nccwpck_require__(6197)
@@ -13298,7 +12936,6 @@ module.exports.mockErrors = mockErrors
 /***/ 9965:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { InvalidArgumentError } = __nccwpck_require__(8707)
@@ -13515,7 +13152,6 @@ module.exports = {
 /***/ 4660:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { AsyncResource } = __nccwpck_require__(290)
@@ -13627,7 +13263,6 @@ module.exports = connect
 /***/ 6862:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const {
@@ -13884,7 +13519,6 @@ module.exports = pipeline
 /***/ 4043:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const Readable = __nccwpck_require__(9927)
@@ -14072,7 +13706,6 @@ module.exports.RequestHandler = RequestHandler
 /***/ 3560:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { finished, PassThrough } = __nccwpck_require__(2203)
@@ -14300,7 +13933,6 @@ module.exports = stream
 /***/ 1882:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { InvalidArgumentError, RequestAbortedError, SocketError } = __nccwpck_require__(8707)
@@ -14413,7 +14045,6 @@ module.exports = upgrade
 /***/ 6615:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 module.exports.request = __nccwpck_require__(4043)
@@ -14428,7 +14059,6 @@ module.exports.connect = __nccwpck_require__(4660)
 /***/ 9927:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 // Ported from https://github.com/nodejs/undici/pull/907
 
 
@@ -14811,7 +14441,6 @@ module.exports = { getResolveErrorBodyCallback }
 /***/ 1093:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const {
@@ -15009,7 +14638,6 @@ module.exports = BalancedPool
 /***/ 479:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { kConstruct } = __nccwpck_require__(296)
@@ -15855,7 +15483,6 @@ module.exports = {
 /***/ 4738:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { kConstruct } = __nccwpck_require__(296)
@@ -16007,7 +15634,6 @@ module.exports = {
 /***/ 296:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 module.exports = {
@@ -16020,7 +15646,6 @@ module.exports = {
 /***/ 3993:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const assert = __nccwpck_require__(2613)
@@ -16077,7 +15702,6 @@ module.exports = {
 /***/ 6197:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 // @ts-check
 
 
@@ -18368,7 +17992,6 @@ module.exports = Client
 /***/ 3194:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 /* istanbul ignore file: only for Node 12 */
@@ -18424,7 +18047,6 @@ module.exports = function () {
 /***/ 9237:
 /***/ ((module) => {
 
-"use strict";
 
 
 // https://wicg.github.io/cookie-store/#cookie-maximum-attribute-value-size
@@ -18444,7 +18066,6 @@ module.exports = {
 /***/ 3168:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { parseSetCookie } = __nccwpck_require__(8915)
@@ -18636,7 +18257,6 @@ module.exports = {
 /***/ 8915:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { maxNameValuePairSize, maxAttributeValueSize } = __nccwpck_require__(9237)
@@ -18961,7 +18581,6 @@ module.exports = {
 /***/ 3834:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const assert = __nccwpck_require__(2613)
@@ -19260,7 +18879,6 @@ module.exports = {
 /***/ 9136:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const net = __nccwpck_require__(9278)
@@ -19457,7 +19075,6 @@ module.exports = buildConnector
 /***/ 735:
 /***/ ((module) => {
 
-"use strict";
 
 
 /** @type {Record<string, string | undefined>} */
@@ -19583,7 +19200,6 @@ module.exports = {
 /***/ 8707:
 /***/ ((module) => {
 
-"use strict";
 
 
 class UndiciError extends Error {
@@ -19821,7 +19437,6 @@ module.exports = {
 /***/ 4655:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const {
@@ -20398,7 +20013,6 @@ module.exports = {
 /***/ 3440:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const assert = __nccwpck_require__(2613)
@@ -20928,7 +20542,6 @@ module.exports = {
 /***/ 1:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const Dispatcher = __nccwpck_require__(992)
@@ -21128,7 +20741,6 @@ module.exports = DispatcherBase
 /***/ 992:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const EventEmitter = __nccwpck_require__(4434)
@@ -21155,7 +20767,6 @@ module.exports = Dispatcher
 /***/ 8923:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const Busboy = __nccwpck_require__(9581)
@@ -21776,7 +21387,6 @@ module.exports = {
 /***/ 7326:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { MessageChannel, receiveMessageOnPort } = __nccwpck_require__(8167)
@@ -22569,7 +22179,6 @@ module.exports = {
 /***/ 3041:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { Blob, File: NativeFile } = __nccwpck_require__(181)
@@ -22921,7 +22530,6 @@ module.exports = { File, FileLike, isFileLike }
 /***/ 3073:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { isBlobLike, toUSVString, makeIterator } = __nccwpck_require__(5523)
@@ -23194,7 +22802,6 @@ module.exports = { FormData }
 /***/ 5628:
 /***/ ((module) => {
 
-"use strict";
 
 
 // In case of breaking changes, increase the version
@@ -23242,7 +22849,6 @@ module.exports = {
 /***/ 6349:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 // https://github.com/Ethan-Arrowood/undici-fetch
 
 
@@ -23839,7 +23445,6 @@ module.exports = {
 /***/ 2315:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 // https://github.com/Ethan-Arrowood/undici-fetch
 
 
@@ -25995,7 +25600,6 @@ module.exports = {
 /***/ 5194:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 /* globals AbortController */
 
 
@@ -26949,7 +26553,6 @@ module.exports = { Request, makeRequest }
 /***/ 8676:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { Headers, HeadersList, fill } = __nccwpck_require__(6349)
@@ -27528,7 +27131,6 @@ module.exports = {
 /***/ 9710:
 /***/ ((module) => {
 
-"use strict";
 
 
 module.exports = {
@@ -27546,7 +27148,6 @@ module.exports = {
 /***/ 5523:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { redirectStatusSet, referrerPolicySet: referrerPolicyTokens, badPortsSet } = __nccwpck_require__(7326)
@@ -28698,7 +28299,6 @@ module.exports = {
 /***/ 4222:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { types } = __nccwpck_require__(9023)
@@ -29352,7 +28952,6 @@ module.exports = {
 /***/ 396:
 /***/ ((module) => {
 
-"use strict";
 
 
 /**
@@ -29650,7 +29249,6 @@ module.exports = {
 /***/ 2160:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const {
@@ -30002,7 +29600,6 @@ module.exports = {
 /***/ 5976:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { webidl } = __nccwpck_require__(4222)
@@ -30088,7 +29685,6 @@ module.exports = {
 /***/ 6812:
 /***/ ((module) => {
 
-"use strict";
 
 
 module.exports = {
@@ -30106,7 +29702,6 @@ module.exports = {
 /***/ 165:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const {
@@ -30506,7 +30101,6 @@ module.exports = {
 /***/ 2581:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 // We include a version number for the Dispatcher API. In case of breaking changes,
@@ -30546,7 +30140,6 @@ module.exports = {
 /***/ 8840:
 /***/ ((module) => {
 
-"use strict";
 
 
 module.exports = class DecoratorHandler {
@@ -30589,7 +30182,6 @@ module.exports = class DecoratorHandler {
 /***/ 8299:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const util = __nccwpck_require__(3440)
@@ -31161,7 +30753,6 @@ module.exports = RetryHandler
 /***/ 4415:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const RedirectHandler = __nccwpck_require__(8299)
@@ -31190,7 +30781,6 @@ module.exports = createRedirectInterceptor
 /***/ 2824:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
-"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.SPECIAL_HEADERS = exports.HEADER_STATE = exports.MINOR = exports.MAJOR = exports.CONNECTION_TOKEN_CHARS = exports.HEADER_CHARS = exports.TOKEN = exports.STRICT_TOKEN = exports.HEX = exports.URL_CHAR = exports.STRICT_URL_CHAR = exports.USERINFO_CHARS = exports.MARK = exports.ALPHANUM = exports.NUM = exports.HEX_MAP = exports.NUM_MAP = exports.ALPHA = exports.FINISH = exports.H_METHOD_MAP = exports.METHOD_MAP = exports.METHODS_RTSP = exports.METHODS_ICE = exports.METHODS_HTTP = exports.METHODS = exports.LENIENT_FLAGS = exports.FLAGS = exports.TYPE = exports.ERROR = void 0;
@@ -31491,7 +31081,6 @@ module.exports = 'AGFzbQEAAAABMAhgAX8Bf2ADf39/AX9gBH9/f38Bf2AAAGADf39/AGABfwBgAn
 /***/ 172:
 /***/ ((__unused_webpack_module, exports) => {
 
-"use strict";
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.enumToMap = void 0;
@@ -31513,7 +31102,6 @@ exports.enumToMap = enumToMap;
 /***/ 7501:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { kClients } = __nccwpck_require__(6443)
@@ -31692,7 +31280,6 @@ module.exports = MockAgent
 /***/ 7365:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { promisify } = __nccwpck_require__(9023)
@@ -31759,7 +31346,6 @@ module.exports = MockClient
 /***/ 2429:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { UndiciError } = __nccwpck_require__(8707)
@@ -31784,7 +31370,6 @@ module.exports = {
 /***/ 1511:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { getResponseData, buildKey, addMockDispatch } = __nccwpck_require__(3397)
@@ -31998,7 +31583,6 @@ module.exports.MockScope = MockScope
 /***/ 4004:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { promisify } = __nccwpck_require__(9023)
@@ -32065,7 +31649,6 @@ module.exports = MockPool
 /***/ 1117:
 /***/ ((module) => {
 
-"use strict";
 
 
 module.exports = {
@@ -32096,7 +31679,6 @@ module.exports = {
 /***/ 3397:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { MockNotMatchedError } = __nccwpck_require__(2429)
@@ -32455,7 +32037,6 @@ module.exports = {
 /***/ 6142:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { Transform } = __nccwpck_require__(2203)
@@ -32503,7 +32084,6 @@ module.exports = class PendingInterceptorsFormatter {
 /***/ 1529:
 /***/ ((module) => {
 
-"use strict";
 
 
 const singulars = {
@@ -32540,7 +32120,6 @@ module.exports = class Pluralizer {
 /***/ 4869:
 /***/ ((module) => {
 
-"use strict";
 /* eslint-disable */
 
 
@@ -32665,7 +32244,6 @@ module.exports = class FixedQueue {
 /***/ 8640:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const DispatcherBase = __nccwpck_require__(1)
@@ -32908,7 +32486,6 @@ module.exports = PoolStats
 /***/ 5076:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const {
@@ -33010,7 +32587,6 @@ module.exports = Pool
 /***/ 2720:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { kProxy, kClose, kDestroy, kInterceptors } = __nccwpck_require__(6443)
@@ -33207,7 +32783,6 @@ module.exports = ProxyAgent
 /***/ 8804:
 /***/ ((module) => {
 
-"use strict";
 
 
 let fastNow = Date.now()
@@ -33312,7 +32887,6 @@ module.exports = {
 /***/ 8550:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const diagnosticsChannel = __nccwpck_require__(1637)
@@ -33611,7 +33185,6 @@ module.exports = {
 /***/ 5913:
 /***/ ((module) => {
 
-"use strict";
 
 
 // This is a Globally Unique Identifier unique used
@@ -33670,7 +33243,6 @@ module.exports = {
 /***/ 6255:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { webidl } = __nccwpck_require__(4222)
@@ -33981,7 +33553,6 @@ module.exports = {
 /***/ 1237:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { maxUnsigned16Bit } = __nccwpck_require__(5913)
@@ -34062,7 +33633,6 @@ module.exports = {
 /***/ 3171:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { Writable } = __nccwpck_require__(2203)
@@ -34414,7 +33984,6 @@ module.exports = {
 /***/ 2933:
 /***/ ((module) => {
 
-"use strict";
 
 
 module.exports = {
@@ -34434,7 +34003,6 @@ module.exports = {
 /***/ 3574:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { kReadyState, kController, kResponse, kBinaryType, kWebSocketURL } = __nccwpck_require__(2933)
@@ -34642,7 +34210,6 @@ module.exports = {
 /***/ 5171:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const { webidl } = __nccwpck_require__(4222)
@@ -35291,7 +34858,6 @@ module.exports = {
 /***/ 3843:
 /***/ ((__unused_webpack_module, exports) => {
 
-"use strict";
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
@@ -35357,255 +34923,223 @@ function wrappy (fn, cb) {
 /***/ 2613:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("assert");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("assert");
 
 /***/ }),
 
 /***/ 290:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("async_hooks");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("async_hooks");
 
 /***/ }),
 
 /***/ 181:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("buffer");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("buffer");
 
 /***/ }),
 
 /***/ 5317:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("child_process");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("child_process");
 
 /***/ }),
 
 /***/ 4236:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("console");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("console");
 
 /***/ }),
 
 /***/ 6982:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("crypto");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("crypto");
 
 /***/ }),
 
 /***/ 1637:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("diagnostics_channel");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("diagnostics_channel");
 
 /***/ }),
 
 /***/ 4434:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("events");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("events");
 
 /***/ }),
 
 /***/ 9896:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("fs");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("fs");
 
 /***/ }),
 
 /***/ 8611:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("http");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("http");
 
 /***/ }),
 
 /***/ 5675:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("http2");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("http2");
 
 /***/ }),
 
 /***/ 5692:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("https");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("https");
 
 /***/ }),
 
 /***/ 9278:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("net");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("net");
 
 /***/ }),
 
 /***/ 7598:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("node:crypto");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:crypto");
 
 /***/ }),
 
 /***/ 8474:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("node:events");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:events");
 
 /***/ }),
 
 /***/ 7075:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("node:stream");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:stream");
 
 /***/ }),
 
 /***/ 7975:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("node:util");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:util");
 
 /***/ }),
 
 /***/ 857:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("os");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("os");
 
 /***/ }),
 
 /***/ 6928:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("path");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("path");
 
 /***/ }),
 
 /***/ 2987:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("perf_hooks");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("perf_hooks");
 
 /***/ }),
 
 /***/ 3480:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("querystring");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("querystring");
 
 /***/ }),
 
 /***/ 2203:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("stream");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("stream");
 
 /***/ }),
 
 /***/ 3774:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("stream/web");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("stream/web");
 
 /***/ }),
 
 /***/ 3193:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("string_decoder");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("string_decoder");
 
 /***/ }),
 
 /***/ 3557:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("timers");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("timers");
 
 /***/ }),
 
 /***/ 4756:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("tls");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("tls");
 
 /***/ }),
 
 /***/ 7016:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("url");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("url");
 
 /***/ }),
 
 /***/ 9023:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("util");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("util");
 
 /***/ }),
 
 /***/ 8253:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("util/types");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("util/types");
 
 /***/ }),
 
 /***/ 8167:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("worker_threads");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("worker_threads");
 
 /***/ }),
 
 /***/ 3106:
 /***/ ((module) => {
 
-"use strict";
-module.exports = require("zlib");
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("zlib");
 
 /***/ }),
 
 /***/ 7182:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const WritableStream = (__nccwpck_require__(7075).Writable)
@@ -35826,7 +35360,6 @@ module.exports = Dicer
 /***/ 2271:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const EventEmitter = (__nccwpck_require__(8474).EventEmitter)
@@ -35934,7 +35467,6 @@ module.exports = HeaderParser
 /***/ 612:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const inherits = (__nccwpck_require__(7975).inherits)
@@ -35955,7 +35487,6 @@ module.exports = PartStream
 /***/ 4136:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 /**
@@ -36191,7 +35722,6 @@ module.exports = SBMH
 /***/ 9581:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const WritableStream = (__nccwpck_require__(7075).Writable)
@@ -36284,7 +35814,6 @@ module.exports.Dicer = Dicer
 /***/ 1192:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 // TODO:
@@ -36598,7 +36127,6 @@ module.exports = Multipart
 /***/ 855:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 
 
 const Decoder = __nccwpck_require__(1496)
@@ -36796,7 +36324,6 @@ module.exports = UrlEncoded
 /***/ 1496:
 /***/ ((module) => {
 
-"use strict";
 
 
 const RE_PLUS = /\+/g
@@ -36858,7 +36385,6 @@ module.exports = Decoder
 /***/ 692:
 /***/ ((module) => {
 
-"use strict";
 
 
 module.exports = function basename (path) {
@@ -36880,7 +36406,6 @@ module.exports = function basename (path) {
 /***/ 2747:
 /***/ (function(module) {
 
-"use strict";
 
 
 // Node has always utf-8
@@ -37002,7 +36527,6 @@ module.exports = decodeText
 /***/ 2393:
 /***/ ((module) => {
 
-"use strict";
 
 
 module.exports = function getLimit (limits, name, defaultLimit) {
@@ -37026,7 +36550,6 @@ module.exports = function getLimit (limits, name, defaultLimit) {
 /***/ 8929:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-"use strict";
 /* eslint-disable object-property-newline */
 
 
@@ -37227,51 +36750,313 @@ module.exports = parseParams
 
 /***/ })
 
-/******/ 	});
+/******/ });
 /************************************************************************/
-/******/ 	// The module cache
-/******/ 	var __webpack_module_cache__ = {};
-/******/ 	
-/******/ 	// The require function
-/******/ 	function __nccwpck_require__(moduleId) {
-/******/ 		// Check if module is in cache
-/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
-/******/ 		if (cachedModule !== undefined) {
-/******/ 			return cachedModule.exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			// no module.id needed
-/******/ 			// no module.loaded needed
-/******/ 			exports: {}
-/******/ 		};
-/******/ 	
-/******/ 		// Execute the module function
-/******/ 		var threw = true;
-/******/ 		try {
-/******/ 			__webpack_modules__[moduleId].call(module.exports, module, module.exports, __nccwpck_require__);
-/******/ 			threw = false;
-/******/ 		} finally {
-/******/ 			if(threw) delete __webpack_module_cache__[moduleId];
-/******/ 		}
-/******/ 	
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
+/******/ // The module cache
+/******/ var __webpack_module_cache__ = {};
+/******/ 
+/******/ // The require function
+/******/ function __nccwpck_require__(moduleId) {
+/******/ 	// Check if module is in cache
+/******/ 	var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 	if (cachedModule !== undefined) {
+/******/ 		return cachedModule.exports;
 /******/ 	}
-/******/ 	
+/******/ 	// Create a new module (and put it into the cache)
+/******/ 	var module = __webpack_module_cache__[moduleId] = {
+/******/ 		// no module.id needed
+/******/ 		// no module.loaded needed
+/******/ 		exports: {}
+/******/ 	};
+/******/ 
+/******/ 	// Execute the module function
+/******/ 	var threw = true;
+/******/ 	try {
+/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __nccwpck_require__);
+/******/ 		threw = false;
+/******/ 	} finally {
+/******/ 		if(threw) delete __webpack_module_cache__[moduleId];
+/******/ 	}
+/******/ 
+/******/ 	// Return the exports of the module
+/******/ 	return module.exports;
+/******/ }
+/******/ 
 /************************************************************************/
-/******/ 	/* webpack/runtime/compat */
-/******/ 	
-/******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
-/******/ 	
+/******/ /* webpack/runtime/compat */
+/******/ 
+/******/ if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = new URL('.', import.meta.url).pathname.slice(import.meta.url.match(/^file:\/\/\/\w:/) ? 1 : 0, -1) + "/";
+/******/ 
 /************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __nccwpck_require__(5915);
-/******/ 	module.exports = __webpack_exports__;
-/******/ 	
-/******/ })()
-;
+var __webpack_exports__ = {};
+
+// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
+var core = __nccwpck_require__(7484);
+// EXTERNAL MODULE: external "fs"
+var external_fs_ = __nccwpck_require__(9896);
+// EXTERNAL MODULE: ./node_modules/@actions/io/lib/io.js
+var io = __nccwpck_require__(4994);
+// EXTERNAL MODULE: external "os"
+var external_os_ = __nccwpck_require__(857);
+// EXTERNAL MODULE: external "path"
+var external_path_ = __nccwpck_require__(6928);
+// EXTERNAL MODULE: ./node_modules/@actions/tool-cache/lib/tool-cache.js
+var tool_cache = __nccwpck_require__(3472);
+;// CONCATENATED MODULE: ./lib/src/constants.js
+const RELEASE_TAG_IDENTIFIER = 'tectonic@';
+const REPO_OWNER = 'tectonic-typesetting';
+const TECTONIC = 'tectonic';
+const BIBER_DL_BASE_PATH = 'https://sourceforge.net/projects/biblatex-biber/files/biblatex-biber';
+const BINARIES = 'binaries';
+const DOWNLOAD = 'download';
+//# sourceMappingURL=constants.js.map
+// EXTERNAL MODULE: ./node_modules/semver/index.js
+var semver = __nccwpck_require__(2088);
+;// CONCATENATED MODULE: ./lib/src/biber.js
+
+
+
+
+
+const validBiberVersion = (biberVersion) => {
+    const biberSemVer = (0,semver.coerce)(biberVersion);
+    if (biberSemVer === null) {
+        (0,core.debug)(`Invalid biber version: "${biberVersion}". Defaulting to latest version`);
+        return 'current';
+    }
+    if (biberSemVer.patch !== 0) {
+        return biberSemVer.version;
+    }
+    return `${biberSemVer.major.toFixed()}.${biberSemVer.minor.toFixed()}`;
+};
+const downloadBiber = async (biberVersion) => {
+    const validVersion = validBiberVersion(biberVersion);
+    const platform = external_os_.platform();
+    const fileName = mapOsToFileName(platform);
+    const url = buildDownloadURL(validVersion, fileName, platform);
+    (0,core.debug)(`Downloading Biber from ${url}`);
+    const archivePath = await (0,tool_cache.downloadTool)(url);
+    (0,core.debug)('Extracting Biber');
+    let biberPath;
+    if (fileName.endsWith('.zip')) {
+        biberPath = await (0,tool_cache.extractZip)(archivePath);
+    }
+    else if (fileName.endsWith('.tar.gz')) {
+        biberPath = await (0,tool_cache.extractTar)(archivePath);
+    }
+    (0,core.debug)(`Biber path is ${biberPath ?? 'undefined'}`);
+    if (!archivePath || !biberPath) {
+        throw new Error(`Unable to download biber from ${url}`);
+    }
+    return biberPath;
+};
+const buildDownloadURL = (version, fileName, platform) => [
+    BIBER_DL_BASE_PATH,
+    version,
+    BINARIES,
+    mapOsToIdentifier(platform, version),
+    fileName,
+    DOWNLOAD
+].join('/');
+const mapOsToIdentifier = (platform, version) => {
+    const mappings = {
+        win32: 'Windows',
+        darwin: isUsingNewMacOsNaming(version) ? 'MacOS' : 'OSX_Intel',
+        linux: 'Linux'
+    };
+    return mappings[platform] ?? platform;
+};
+const mapOsToFileName = (platform) => {
+    const platformFileNames = {
+        win32: 'biber-MSWIN64.zip',
+        darwin: 'biber-darwin_x86_64.tar.gz',
+        linux: 'biber-linux_x86_64.tar.gz'
+    };
+    const fileName = platformFileNames[platform];
+    if (!fileName) {
+        throw new Error(`Unsupported platform for biber: ${platform}`);
+    }
+    return fileName;
+};
+/**
+ * Versions beginning with 2.17 uses 'MacOS' instead of 'OSX_Intel' as their platform identifier.
+ * @see https://sourceforge.net/projects/biblatex-biber/files/biblatex-biber/2.17/ compared to https://sourceforge.net/projects/biblatex-biber/files/biblatex-biber/2.16/
+ * @param version - the validated biber version (semver or 'current')
+ * @returns true if using the new naming scheme
+ */
+const isUsingNewMacOsNaming = (version) => version === 'current' || (0,semver.satisfies)((0,semver.coerce)(version), '>=2.17');
+//# sourceMappingURL=biber.js.map
+// EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
+var github = __nccwpck_require__(3228);
+;// CONCATENATED MODULE: ./lib/src/release.js
+
+
+
+class Release {
+    id;
+    name;
+    version;
+    semVerVersion;
+    tagName;
+    assets;
+    constructor(id, tagName, assets, name) {
+        this.id = id;
+        this.name = name;
+        this.version = tagName.replace(RELEASE_TAG_IDENTIFIER, '');
+        this.semVerVersion = (0,semver.coerce)(this.version);
+        this.tagName = tagName;
+        this.assets = assets;
+    }
+    getAsset(platform) {
+        const versionPrefix = `tectonic-${this.version}-x86_64`;
+        const favourLinuxAppImage = this.semVerVersion != null && this.semVerVersion.minor <= 10;
+        const platformFileNames = {
+            windows: `${versionPrefix}-pc-${platform}-msvc.zip`,
+            darwin: `${versionPrefix}-apple-${platform}.tar.gz`,
+            linux: favourLinuxAppImage
+                ? `${versionPrefix}.AppImage`
+                : `${versionPrefix}-unknown-linux-gnu.tar.gz`
+        };
+        const fileName = platformFileNames[platform];
+        return this.assets.find(ghAsset => ghAsset.name === fileName);
+    }
+}
+const getTectonicRelease = async (githubToken, version) => {
+    const octo = (0,github.getOctokit)(githubToken);
+    const validVersion = (0,semver.valid)(version);
+    if (validVersion) {
+        const { data: releaseData } = await octo.rest.repos.getReleaseByTag({
+            owner: REPO_OWNER,
+            repo: TECTONIC,
+            tag: `${RELEASE_TAG_IDENTIFIER}${validVersion}`
+        });
+        const { id, tag_name, name, assets } = releaseData;
+        return new Release(id, tag_name, asReleaseAsset(assets), name);
+    }
+    return getLatestRelease(octo);
+};
+const getLatestRelease = async (octo) => {
+    const releases = await octo.rest.repos.listReleases({
+        owner: REPO_OWNER,
+        repo: TECTONIC
+    });
+    const release = releases.data.find((currentRelease) => currentRelease.tag_name.startsWith(RELEASE_TAG_IDENTIFIER));
+    if (release) {
+        return new Release(release.id, release.tag_name, asReleaseAsset(release.assets), release.name);
+    }
+    else {
+        throw new Error('Couldnt get latest tectonic release');
+    }
+};
+const asReleaseAsset = (assets) => {
+    return assets.map(ghAsset => ({
+        name: ghAsset.name,
+        url: ghAsset.browser_download_url
+    }));
+};
+//# sourceMappingURL=release.js.map
+// EXTERNAL MODULE: external "crypto"
+var external_crypto_ = __nccwpck_require__(6982);
+;// CONCATENATED MODULE: ./lib/src/setup-tectonic.js
+
+
+
+
+
+
+
+
+
+const mapOS = (osKey) => {
+    const mappings = {
+        win32: 'windows'
+    };
+    return mappings[osKey] ?? osKey;
+};
+const downloadTectonic = async (url) => {
+    (0,core.debug)(`Downloading Tectonic from ${url}`);
+    const archivePath = await (0,tool_cache.downloadTool)(url);
+    (0,core.debug)('Extracting Tectonic');
+    let tectonicPath;
+    if (url.endsWith('.zip')) {
+        tectonicPath = await (0,tool_cache.extractZip)(archivePath);
+    }
+    else if (url.endsWith('.tar.gz')) {
+        tectonicPath = await (0,tool_cache.extractTar)(archivePath);
+    }
+    else if (url.endsWith('.AppImage')) {
+        tectonicPath = await createPathForAppImage(archivePath);
+    }
+    (0,core.debug)(`Tectonic path is ${tectonicPath ?? 'undefined'}`);
+    if (!archivePath || !tectonicPath) {
+        throw new Error(`Unable to download tectonic from ${url}`);
+    }
+    return tectonicPath;
+};
+const createPathForAppImage = async (appPath) => {
+    const tectonicPath = await createTempFolder(appPath);
+    const newAppPath = (0,external_path_.resolve)(tectonicPath, 'tectonic');
+    await (0,io.mv)(appPath, newAppPath);
+    (0,core.debug)(`Moved Tectonic from ${appPath} to ${newAppPath}`);
+    // make it executable
+    (0,external_fs_.chmodSync)(newAppPath, '750');
+    return tectonicPath;
+};
+const createTempFolder = async (pathToExecutable) => {
+    const destFolder = (0,external_path_.join)((0,external_path_.dirname)(pathToExecutable), (0,external_crypto_.randomUUID)());
+    await (0,io.mkdirP)(destFolder);
+    return destFolder;
+};
+const setUpTectonic = async () => {
+    try {
+        const githubToken = (0,core.getInput)('github-token', { required: true });
+        const version = (0,core.getInput)('tectonic-version');
+        const biberVersion = (0,core.getInput)('biber-version');
+        (0,core.debug)(`Finding releases for Tectonic version ${version}`);
+        const release = await getTectonicRelease(githubToken, version);
+        const platform = mapOS((0,external_os_.platform)());
+        (0,core.debug)(`Getting build for Tectonic version ${release.version}: ${platform}`);
+        (0,core.debug)(`Release: ${JSON.stringify(release)}`);
+        const asset = release.getAsset(platform);
+        if (!asset) {
+            throw new Error(`Tectonic version ${version} not available for ${platform}`);
+        }
+        const tectonicPath = await downloadTectonic(asset.url);
+        (0,core.addPath)(tectonicPath);
+        if (biberVersion) {
+            // optionally download biber
+            (0,core.debug)(`Biber version: ${biberVersion}`);
+            const biberPath = await downloadBiber(biberVersion);
+            (0,core.addPath)(biberPath);
+        }
+        return release;
+    }
+    catch (exception) {
+        if (exception instanceof Error || typeof exception === 'string') {
+            (0,core.error)(exception);
+        }
+        throw exception;
+    }
+};
+//# sourceMappingURL=setup-tectonic.js.map
+;// CONCATENATED MODULE: ./lib/src/main.js
+
+
+const run = async () => {
+    try {
+        await setUpTectonic();
+    }
+    catch (error) {
+        if (error instanceof Error || typeof error === 'string') {
+            const message = error instanceof Error ? error.message : error;
+            (0,core.setFailed)(message);
+        }
+        else {
+            (0,core.setFailed)('Unknown error');
+        }
+    }
+};
+void run();
+//# sourceMappingURL=main.js.map
+
 //# sourceMappingURL=index.js.map

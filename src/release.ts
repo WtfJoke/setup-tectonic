@@ -1,5 +1,5 @@
-import {GithubOktokit, GithubReleaseAssets} from './github-types'
-import {RELEASE_TAG_IDENTIFIER, REPO_OWNER, TECTONIC} from './constants'
+import type {GithubOktokit, GithubReleaseAssets} from './github-types.js'
+import {RELEASE_TAG_IDENTIFIER, REPO_OWNER, TECTONIC} from './constants.js'
 import {getOctokit} from '@actions/github'
 import {coerce, SemVer, valid} from 'semver'
 
@@ -72,7 +72,7 @@ const getLatestRelease = async (octo: GithubOktokit) => {
     owner: REPO_OWNER,
     repo: TECTONIC
   })
-  const release = releases.data.find(currentRelease =>
+  const release = releases.data.find((currentRelease: {tag_name: string}) =>
     currentRelease.tag_name.startsWith(RELEASE_TAG_IDENTIFIER)
   )
 

@@ -1,5 +1,5 @@
 import {setFailed} from '@actions/core'
-import {setUpTectonic} from './setup-tectonic'
+import {setUpTectonic} from './setup-tectonic.js'
 
 const run = async () => {
   try {
