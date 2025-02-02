@@ -23,6 +23,9 @@
       "declaration": true,
   
       /* If your code doesn't run in the DOM: */
-      "lib": ["es2022"]
+      "lib": ["es2022"],
+
+      /* vitest globals */
+      "types": ["vitest/globals"]
   }
 }

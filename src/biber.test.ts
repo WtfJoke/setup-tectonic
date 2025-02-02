@@ -1,11 +1,8 @@
 import {buildDownloadURL, downloadBiber, validBiberVersion} from './biber.js'
-import {existsSync} from 'fs'
+import {existsSync, rmSync} from 'fs'
 import {join, resolve} from 'path'
 import {platform} from 'os'
 import {execFileSync} from 'child_process'
-
-const tempDir = join(__dirname, 'runner', 'temp')
-process.env.RUNNER_TEMP = tempDir
 
 describe('build download link', () => {
   test("should build download link on windows for biber version 'current'", () => {
@@ -62,27 +59,46 @@ test('get biber version as major.minor.patch', () => {
   expect(validBiberVersion(' 2.16.1')).toBe('2.16.1')
 })
 
-test('download non-existant biber version', async () => {
-  await expect(downloadBiber('0.0.0')).rejects.toThrow()
-}, 20000)
+describe.sequential('Download biber versions', () => {
+  const tempDir = join(import.meta.dirname, 'runner', 'temp')
 
-test('download specific biber version', async () => {
-  const biberPath = await downloadBiber('2.15')
-  const fileExtension = platform() === 'win32' ? '.exe' : ''
-  const expectedBinaryPath = resolve(biberPath, `biber${fileExtension}`)
+  beforeAll(() => {
+    // eslint-disable-next-line no-console
+    console.log('tempDir: ', tempDir)
+    vi.stubEnv('RUNNER_TEMP', tempDir)
+  })
 
-  expect(existsSync(biberPath)).toBe(true)
-  expect(existsSync(expectedBinaryPath)).toBe(true)
-  expect(execFileSync(expectedBinaryPath, ['--version']).toString()).toMatch(
-    /2\.15/
+  afterAll(() => {
+    rmSync(tempDir, {recursive: true})
+    vi.unstubAllEnvs()
+  })
+
+  test('download non-existent biber version', async () => {
+    await expect(downloadBiber('0.0.0')).rejects.toThrow()
+  }, 20000)
+
+  test('download specific biber version', {timeout: 60_000}, async () => {
+    const biberPath = await downloadBiber('2.15')
+    const fileExtension = platform() === 'win32' ? '.exe' : ''
+    const expectedBinaryPath = resolve(biberPath, `biber${fileExtension}`)
+
+    expect(existsSync(biberPath)).toBe(true)
+    expect(existsSync(expectedBinaryPath)).toBe(true)
+    expect(execFileSync(expectedBinaryPath, ['--version']).toString()).toMatch(
+      /2\.15/
+    )
+  })
+
+  test(
+    'download invalid biber version, should install current',
+    {timeout: 60_000},
+    async () => {
+      const biberPath = await downloadBiber('invalidVersion')
+      const fileExtension = platform() === 'win32' ? '.exe' : ''
+      const expectedBinaryPath = resolve(biberPath, `biber${fileExtension}`)
+
+      expect(existsSync(biberPath)).toBe(true)
+      expect(existsSync(expectedBinaryPath)).toBe(true)
+    }
   )
-}, 40000)
-
-test('download invalid biber version, should install current', async () => {
-  const biberPath = await downloadBiber('invalidVersion')
-  const fileExtension = platform() === 'win32' ? '.exe' : ''
-  const expectedBinaryPath = resolve(biberPath, `biber${fileExtension}`)
-
-  expect(existsSync(biberPath)).toBe(true)
-  expect(existsSync(expectedBinaryPath)).toBe(true)
-}, 40000)
+})
