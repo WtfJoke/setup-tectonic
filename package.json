@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "@octokit/types": "13.10.0",
-    "@types/node": "22.13.14",
+    "@types/node": "22.14.1",
     "@types/semver": "7.5.8",
     "@types/uuid": "10.0.0",
     "@typescript-eslint/eslint-plugin": "8.29.1",
