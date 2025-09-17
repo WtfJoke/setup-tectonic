@@ -88,7 +88,12 @@ const getLatestRelease = async (octo: GithubOktokit) => {
   }
 };
 
-const asReleaseAsset = (assets: GithubReleaseAssets): ReleaseAsset[] => {
+const asReleaseAsset = (
+  assets: readonly Pick<
+    GithubReleaseAssets[number],
+    "name" | "browser_download_url"
+  >[],
+): ReleaseAsset[] => {
   return assets.map((ghAsset) => ({
     name: ghAsset.name,
     url: ghAsset.browser_download_url,
