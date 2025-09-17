@@ -36893,26 +36893,28 @@ var __webpack_exports__ = {};
 
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
 var core = __nccwpck_require__(7484);
-// EXTERNAL MODULE: external "fs"
-var external_fs_ = __nccwpck_require__(9896);
+// EXTERNAL MODULE: external "node:crypto"
+var external_node_crypto_ = __nccwpck_require__(7598);
+;// CONCATENATED MODULE: external "node:fs"
+const external_node_fs_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:fs");
+;// CONCATENATED MODULE: external "node:os"
+const external_node_os_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:os");
+;// CONCATENATED MODULE: external "node:path"
+const external_node_path_namespaceObject = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:path");
 // EXTERNAL MODULE: ./node_modules/@actions/io/lib/io.js
 var io = __nccwpck_require__(4994);
-// EXTERNAL MODULE: external "os"
-var external_os_ = __nccwpck_require__(857);
-// EXTERNAL MODULE: external "path"
-var external_path_ = __nccwpck_require__(6928);
 // EXTERNAL MODULE: ./node_modules/@actions/tool-cache/lib/tool-cache.js
 var tool_cache = __nccwpck_require__(3472);
-;// CONCATENATED MODULE: ./lib/src/constants.js
-const RELEASE_TAG_IDENTIFIER = 'tectonic@';
-const REPO_OWNER = 'tectonic-typesetting';
-const TECTONIC = 'tectonic';
-const BIBER_DL_BASE_PATH = 'https://sourceforge.net/projects/biblatex-biber/files/biblatex-biber';
-const BINARIES = 'binaries';
-const DOWNLOAD = 'download';
-//# sourceMappingURL=constants.js.map
 // EXTERNAL MODULE: ./node_modules/semver/index.js
 var semver = __nccwpck_require__(2088);
+;// CONCATENATED MODULE: ./lib/src/constants.js
+const RELEASE_TAG_IDENTIFIER = "tectonic@";
+const REPO_OWNER = "tectonic-typesetting";
+const TECTONIC = "tectonic";
+const BIBER_DL_BASE_PATH = "https://sourceforge.net/projects/biblatex-biber/files/biblatex-biber";
+const BINARIES = "binaries";
+const DOWNLOAD = "download";
+//# sourceMappingURL=constants.js.map
 ;// CONCATENATED MODULE: ./lib/src/biber.js
 
 
@@ -36923,7 +36925,7 @@ const validBiberVersion = (biberVersion) => {
     const biberSemVer = (0,semver.coerce)(biberVersion);
     if (biberSemVer === null) {
         (0,core.debug)(`Invalid biber version: "${biberVersion}". Defaulting to latest version`);
-        return 'current';
+        return "current";
     }
     if (biberSemVer.patch !== 0) {
         return biberSemVer.version;
@@ -36932,23 +36934,23 @@ const validBiberVersion = (biberVersion) => {
 };
 const downloadBiber = async (biberVersion) => {
     const validVersion = validBiberVersion(biberVersion);
-    const platform = external_os_.platform();
+    const platform = external_node_os_namespaceObject.platform();
     const fileName = mapOsToFileName(platform);
     const url = buildDownloadURL(validVersion, fileName, platform);
     (0,core.debug)(`Downloading Biber from ${url}`);
     const archivePath = await (0,tool_cache.downloadTool)(url);
-    (0,core.debug)('Extracting Biber');
+    (0,core.debug)("Extracting Biber");
     let biberPath;
-    if (fileName.endsWith('.zip')) {
+    if (fileName.endsWith(".zip")) {
         biberPath = await (0,tool_cache.extractZip)(archivePath);
     }
-    else if (fileName.endsWith('.tar.gz')) {
+    else if (fileName.endsWith(".tar.gz")) {
         biberPath = await (0,tool_cache.extractTar)(archivePath);
     }
-    (0,core.debug)(`Biber path is ${biberPath ?? 'undefined'}`);
-    if (!archivePath || !biberPath) {
-        throw new Error(`Unable to download biber from ${url}`);
+    else {
+        throw new Error(`Unsupported archive format for biber: ${fileName}`);
     }
+    (0,core.debug)(`Biber path is ${biberPath}`);
     return biberPath;
 };
 const buildDownloadURL = (version, fileName, platform) => [
@@ -36957,21 +36959,21 @@ const buildDownloadURL = (version, fileName, platform) => [
     BINARIES,
     mapOsToIdentifier(platform, version),
     fileName,
-    DOWNLOAD
-].join('/');
+    DOWNLOAD,
+].join("/");
 const mapOsToIdentifier = (platform, version) => {
     const mappings = {
-        win32: 'Windows',
-        darwin: isUsingNewMacOsNaming(version) ? 'MacOS' : 'OSX_Intel',
-        linux: 'Linux'
+        win32: "Windows",
+        darwin: isUsingNewMacOsNaming(version) ? "MacOS" : "OSX_Intel",
+        linux: "Linux",
     };
     return mappings[platform] ?? platform;
 };
 const mapOsToFileName = (platform) => {
     const platformFileNames = {
-        win32: 'biber-MSWIN64.zip',
-        darwin: 'biber-darwin_x86_64.tar.gz',
-        linux: 'biber-linux_x86_64.tar.gz'
+        win32: "biber-MSWIN64.zip",
+        darwin: "biber-darwin_x86_64.tar.gz",
+        linux: "biber-linux_x86_64.tar.gz",
     };
     const fileName = platformFileNames[platform];
     if (!fileName) {
@@ -36985,7 +36987,7 @@ const mapOsToFileName = (platform) => {
  * @param version - the validated biber version (semver or 'current')
  * @returns true if using the new naming scheme
  */
-const isUsingNewMacOsNaming = (version) => version === 'current' || (0,semver.satisfies)((0,semver.coerce)(version), '>=2.17');
+const isUsingNewMacOsNaming = (version) => version === "current" || (0,semver.satisfies)(version, ">=2.17");
 //# sourceMappingURL=biber.js.map
 // EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
 var github = __nccwpck_require__(3228);
@@ -37003,7 +37005,7 @@ class Release {
     constructor(id, tagName, assets, name) {
         this.id = id;
         this.name = name;
-        this.version = tagName.replace(RELEASE_TAG_IDENTIFIER, '');
+        this.version = tagName.replace(RELEASE_TAG_IDENTIFIER, "");
         this.semVerVersion = (0,semver.coerce)(this.version);
         this.tagName = tagName;
         this.assets = assets;
@@ -37016,10 +37018,10 @@ class Release {
             darwin: `${versionPrefix}-apple-${platform}.tar.gz`,
             linux: favourLinuxAppImage
                 ? `${versionPrefix}.AppImage`
-                : `${versionPrefix}-unknown-linux-gnu.tar.gz`
+                : `${versionPrefix}-unknown-linux-gnu.tar.gz`,
         };
         const fileName = platformFileNames[platform];
-        return this.assets.find(ghAsset => ghAsset.name === fileName);
+        return this.assets.find((ghAsset) => ghAsset.name === fileName);
     }
 }
 const getTectonicRelease = async (githubToken, version) => {
@@ -37029,7 +37031,7 @@ const getTectonicRelease = async (githubToken, version) => {
         const { data: releaseData } = await octo.rest.repos.getReleaseByTag({
             owner: REPO_OWNER,
             repo: TECTONIC,
-            tag: `${RELEASE_TAG_IDENTIFIER}${validVersion}`
+            tag: `${RELEASE_TAG_IDENTIFIER}${validVersion}`,
         });
         const { id, tag_name, name, assets } = releaseData;
         return new Release(id, tag_name, asReleaseAsset(assets), name);
@@ -37039,25 +37041,23 @@ const getTectonicRelease = async (githubToken, version) => {
 const getLatestRelease = async (octo) => {
     const releases = await octo.rest.repos.listReleases({
         owner: REPO_OWNER,
-        repo: TECTONIC
+        repo: TECTONIC,
     });
     const release = releases.data.find((currentRelease) => currentRelease.tag_name.startsWith(RELEASE_TAG_IDENTIFIER));
     if (release) {
         return new Release(release.id, release.tag_name, asReleaseAsset(release.assets), release.name);
     }
     else {
-        throw new Error('Couldnt get latest tectonic release');
+        throw new Error("Couldnt get latest tectonic release");
     }
 };
 const asReleaseAsset = (assets) => {
-    return assets.map(ghAsset => ({
+    return assets.map((ghAsset) => ({
         name: ghAsset.name,
-        url: ghAsset.browser_download_url
+        url: ghAsset.browser_download_url,
     }));
 };
 //# sourceMappingURL=release.js.map
-// EXTERNAL MODULE: external "crypto"
-var external_crypto_ = __nccwpck_require__(6982);
 ;// CONCATENATED MODULE: ./lib/src/setup-tectonic.js
 
 
@@ -37070,52 +37070,52 @@ var external_crypto_ = __nccwpck_require__(6982);
 
 const mapOS = (osKey) => {
     const mappings = {
-        win32: 'windows'
+        win32: "windows",
     };
     return mappings[osKey] ?? osKey;
 };
 const downloadTectonic = async (url) => {
     (0,core.debug)(`Downloading Tectonic from ${url}`);
     const archivePath = await (0,tool_cache.downloadTool)(url);
-    (0,core.debug)('Extracting Tectonic');
+    (0,core.debug)("Extracting Tectonic");
     let tectonicPath;
-    if (url.endsWith('.zip')) {
+    if (url.endsWith(".zip")) {
         tectonicPath = await (0,tool_cache.extractZip)(archivePath);
     }
-    else if (url.endsWith('.tar.gz')) {
+    else if (url.endsWith(".tar.gz")) {
         tectonicPath = await (0,tool_cache.extractTar)(archivePath);
     }
-    else if (url.endsWith('.AppImage')) {
+    else if (url.endsWith(".AppImage")) {
         tectonicPath = await createPathForAppImage(archivePath);
     }
-    (0,core.debug)(`Tectonic path is ${tectonicPath ?? 'undefined'}`);
-    if (!archivePath || !tectonicPath) {
-        throw new Error(`Unable to download tectonic from ${url}`);
+    else {
+        throw new Error(`Unsupported archive format for tectonic: ${url}`);
     }
+    (0,core.debug)(`Tectonic path is ${tectonicPath}`);
     return tectonicPath;
 };
 const createPathForAppImage = async (appPath) => {
     const tectonicPath = await createTempFolder(appPath);
-    const newAppPath = (0,external_path_.resolve)(tectonicPath, 'tectonic');
+    const newAppPath = (0,external_node_path_namespaceObject.resolve)(tectonicPath, "tectonic");
     await (0,io.mv)(appPath, newAppPath);
     (0,core.debug)(`Moved Tectonic from ${appPath} to ${newAppPath}`);
     // make it executable
-    (0,external_fs_.chmodSync)(newAppPath, '750');
+    (0,external_node_fs_namespaceObject.chmodSync)(newAppPath, "750");
     return tectonicPath;
 };
 const createTempFolder = async (pathToExecutable) => {
-    const destFolder = (0,external_path_.join)((0,external_path_.dirname)(pathToExecutable), (0,external_crypto_.randomUUID)());
+    const destFolder = (0,external_node_path_namespaceObject.join)((0,external_node_path_namespaceObject.dirname)(pathToExecutable), (0,external_node_crypto_.randomUUID)());
     await (0,io.mkdirP)(destFolder);
     return destFolder;
 };
 const setUpTectonic = async () => {
     try {
-        const githubToken = (0,core.getInput)('github-token', { required: true });
-        const version = (0,core.getInput)('tectonic-version');
-        const biberVersion = (0,core.getInput)('biber-version');
+        const githubToken = (0,core.getInput)("github-token", { required: true });
+        const version = (0,core.getInput)("tectonic-version");
+        const biberVersion = (0,core.getInput)("biber-version");
         (0,core.debug)(`Finding releases for Tectonic version ${version}`);
         const release = await getTectonicRelease(githubToken, version);
-        const platform = mapOS((0,external_os_.platform)());
+        const platform = mapOS((0,external_node_os_namespaceObject.platform)());
         (0,core.debug)(`Getting build for Tectonic version ${release.version}: ${platform}`);
         (0,core.debug)(`Release: ${JSON.stringify(release)}`);
         const asset = release.getAsset(platform);
@@ -37133,7 +37133,7 @@ const setUpTectonic = async () => {
         return release;
     }
     catch (exception) {
-        if (exception instanceof Error || typeof exception === 'string') {
+        if (exception instanceof Error || typeof exception === "string") {
             (0,core.error)(exception);
         }
         throw exception;
@@ -37148,12 +37148,12 @@ const run = async () => {
         await setUpTectonic();
     }
     catch (error) {
-        if (error instanceof Error || typeof error === 'string') {
+        if (error instanceof Error || typeof error === "string") {
             const message = error instanceof Error ? error.message : error;
             (0,core.setFailed)(message);
         }
         else {
-            (0,core.setFailed)('Unknown error');
+            (0,core.setFailed)("Unknown error");
         }
     }
 };
