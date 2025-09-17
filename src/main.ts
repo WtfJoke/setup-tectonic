@@ -1,17 +1,17 @@
-import {setFailed} from '@actions/core'
-import {setUpTectonic} from './setup-tectonic.js'
+import { setFailed } from "@actions/core";
+import { setUpTectonic } from "./setup-tectonic.js";
 
 const run = async () => {
   try {
-    await setUpTectonic()
+    await setUpTectonic();
   } catch (error: unknown) {
-    if (error instanceof Error || typeof error === 'string') {
-      const message = error instanceof Error ? error.message : error
-      setFailed(message)
+    if (error instanceof Error || typeof error === "string") {
+      const message = error instanceof Error ? error.message : error;
+      setFailed(message);
     } else {
-      setFailed('Unknown error')
+      setFailed("Unknown error");
     }
   }
-}
+};
 
-void run()
+void run();
