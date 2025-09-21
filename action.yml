@@ -16,7 +16,7 @@ inputs:
     description: 'The version of biber to install. A value of `latest` will install the latest version of biber.'
   
 runs:
-  using: 'node20'
+  using: 'node24'
   main: 'dist/index.js'
 branding:
   icon: book-open

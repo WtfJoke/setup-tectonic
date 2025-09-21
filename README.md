@@ -23,7 +23,7 @@ See [action.yml](https://github.com/WtfJoke/setup-tectonic/blob/main/action.yml)
 
 ```yml
 steps:
-  - uses: wtfjoke/setup-tectonic@v3
+  - uses: wtfjoke/setup-tectonic@v4
   - run: tectonic main.tex
 ```
 
@@ -31,7 +31,7 @@ You can also download a specific version of Tectonic
 
 ```yml
 steps:
-  - uses: wtfjoke/setup-tectonic@v3
+  - uses: wtfjoke/setup-tectonic@v4
     with:
       tectonic-version: 0.14.1
   - run: tectonic main.tex
@@ -41,7 +41,7 @@ If you want to use biber, specify a biber version (for a full example see [below
 
 ```yml
 steps:
-  - uses: wtfjoke/setup-tectonic@v3
+  - uses: wtfjoke/setup-tectonic@v4
     with:
       biber-version: 2.17
   - run: biber --version
@@ -50,7 +50,7 @@ steps:
 ## Upload pdf (using `actions/upload-artifact`)
 
 ```yml
-name: 'Build LaTex Document'
+name: "Build LaTex Document"
 on:
   push:
 jobs:
@@ -60,7 +60,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - uses: wtfjoke/setup-tectonic@v3
+      - uses: wtfjoke/setup-tectonic@v4
       - name: Run Tectonic
         run: tectonic main.tex
       - name: Upload pdf
@@ -73,7 +73,7 @@ jobs:
 ## With enabled cache (using `actions/cache`)
 
 ```yml
-name: 'Build LaTex Document'
+name: "Build LaTex Document"
 on:
   push:
 jobs:
@@ -90,7 +90,7 @@ jobs:
           key: ${{ runner.os }}-tectonic-${{ hashFiles('**/*.tex') }}
           restore-keys: |
             ${{ runner.os }}-tectonic-
-      - uses: wtfjoke/setup-tectonic@v3
+      - uses: wtfjoke/setup-tectonic@v4
       - name: Run Tectonic
         run: tectonic main.tex
       - name: Upload pdf
@@ -103,7 +103,7 @@ jobs:
 ## With biber
 
 ```yml
-name: 'Build LaTex Document with Biber'
+name: "Build LaTex Document with Biber"
 on:
   push:
 jobs:
@@ -120,9 +120,9 @@ jobs:
           key: ${{ runner.os }}-tectonic-${{ hashFiles('**/*.tex') }}
           restore-keys: |
             ${{ runner.os }}-tectonic-
-      - uses: wtfjoke/setup-tectonic@v3
+      - uses: wtfjoke/setup-tectonic@v4
         with:
-          biber-version: 'latest'
+          biber-version: "latest"
       - name: Run Tectonic + Biber
         run: tectonic main.tex
       - name: Upload pdf
@@ -178,7 +178,7 @@ The official cache action [actions/cache](https://github.com/actions/cache) has 
 For tectonic the cache directories (`path`) are as follows (see also [tectonic-typesetting/tectonic#159](https://github.com/tectonic-typesetting/tectonic/issues/159)):
 
 | OS      | Cache-Directory                           | Run-Command to export it as environment variable                          |
-| ------- | ----------------------------------------- | ------------------------------------------------------------------------- |
+| ------- | ----------------------------------------- | ------------------------------------------------------------------------- | ----------------------------------------------------------------- |
 | Linux   | `~/.cache/Tectonic`                       | `echo TECTONIC_CACHE_PATH=~/.cache/Tectonic >> $GITHUB_ENV`               |
 | Mac     | `~/Library/Caches/Tectonic`               | `echo TECTONIC_CACHE_PATH=~/Library/Caches/Tectonic >> $GITHUB_ENV`       |
 | Windows | `%LOCALAPPDATA%\TectonicProject\Tectonic` | <code>echo TECTONIC_CACHE_PATH=$env:LOCALAPPDATA\TectonicProject\Tectonic | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append`</code> |
