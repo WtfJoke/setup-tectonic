@@ -19,10 +19,14 @@
       "nursery": {
         "noFloatingPromises": "error",
         "noMisusedPromises": "error",
-        "noNonNullAssertedOptionalChain": "error",
         "noShadow": "error",
-        "noUnnecessaryConditions": "error",
+        "noUnnecessaryConditions": "error"
+      },
+      "style": {
         "useConsistentTypeDefinitions": "error"
+      },
+      "suspicious": {
+        "noNonNullAssertedOptionalChain": "error"
       }
     }
   },
