@@ -102,16 +102,14 @@ describe.sequential("Download biber versions", () => {
     );
   });
 
-  test(
-    "download invalid biber version, should install current",
-    { timeout: 60_000 },
-    async () => {
-      const biberPath = await downloadBiber("invalidVersion");
-      const fileExtension = platform() === "win32" ? ".exe" : "";
-      const expectedBinaryPath = resolve(biberPath, `biber${fileExtension}`);
+  test("download invalid biber version, should install current", {
+    timeout: 60_000,
+  }, async () => {
+    const biberPath = await downloadBiber("invalidVersion");
+    const fileExtension = platform() === "win32" ? ".exe" : "";
+    const expectedBinaryPath = resolve(biberPath, `biber${fileExtension}`);
 
-      expect(existsSync(biberPath)).toBe(true);
-      expect(existsSync(expectedBinaryPath)).toBe(true);
-    },
-  );
+    expect(existsSync(biberPath)).toBe(true);
+    expect(existsSync(expectedBinaryPath)).toBe(true);
+  });
 });
