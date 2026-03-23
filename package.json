@@ -29,22 +29,22 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "2.0.3",
-    "@actions/github": "6.0.1",
-    "@actions/io": "2.0.0",
-    "@actions/tool-cache": "2.0.2",
+    "@actions/core": "3.0.0",
+    "@actions/github": "9.0.0",
+    "@actions/io": "3.0.2",
+    "@actions/tool-cache": "4.0.0",
     "semver": "7.7.4"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.6",
+    "@biomejs/biome": "2.4.8",
     "@octokit/types": "16.0.0",
-    "@types/node": "24.11.0",
+    "@types/node": "25.5.0",
     "@types/semver": "7.7.1",
     "@vercel/ncc": "0.38.4",
-    "@vitest/coverage-v8": "4.0.18",
+    "@vitest/coverage-v8": "4.1.1",
     "js-yaml": "4.1.1",
-    "typescript": "5.9.3",
-    "vitest": "4.0.18",
+    "typescript": "6.0.2",
+    "vitest": "4.1.1",
     "webpack": "5.105.4"
   }
 }
