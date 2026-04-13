@@ -1,3 +1,4 @@
+import { debug } from "@actions/core";
 import { getOctokit } from "@actions/github";
 import { coerce, type SemVer, valid } from "semver";
 import { RELEASE_TAG_IDENTIFIER, REPO_OWNER, TECTONIC } from "./constants.js";
@@ -68,24 +69,51 @@ export const getTectonicRelease = async (
 };
 
 const getLatestRelease = async (octo: GithubOktokit) => {
-  const releases = await octo.rest.repos.listReleases({
+  debug("Fetching latest release from GitHub");
+  const { data: latestRelease } = await octo.rest.repos.getLatestRelease({
     owner: REPO_OWNER,
     repo: TECTONIC,
   });
-  const release = releases.data.find((currentRelease: { tag_name: string }) =>
-    currentRelease.tag_name.startsWith(RELEASE_TAG_IDENTIFIER),
+
+  debug(`Latest release tag: ${latestRelease.tag_name}`);
+  if (latestRelease.tag_name.startsWith(RELEASE_TAG_IDENTIFIER)) {
+    debug("Latest release is a tectonic release, returning it");
+    return new Release(
+      latestRelease.id,
+      latestRelease.tag_name,
+      asReleaseAsset(latestRelease.assets),
+      latestRelease.name,
+    );
+  }
+
+  debug("Latest release is a component, falling back to paginated search");
+  const releases = await octo.paginate(
+    octo.rest.repos.listReleases,
+    { owner: REPO_OWNER, repo: TECTONIC, per_page: 100 },
+    (response, done) => {
+      const found = response.data.find((r) =>
+        r.tag_name.startsWith(RELEASE_TAG_IDENTIFIER),
+      );
+      if (found) {
+        done();
+        return [found];
+      }
+      return [];
+    },
   );
 
+  const release = releases[0];
   if (release) {
+    debug(`Found tectonic release: ${release.tag_name}`);
     return new Release(
       release.id,
       release.tag_name,
       asReleaseAsset(release.assets),
       release.name,
     );
-  } else {
-    throw new Error("Couldnt get latest tectonic release");
   }
+
+  throw new Error("Could not get latest tectonic release");
 };
 
 const asReleaseAsset = (
