@@ -1,4 +1,15 @@
-import { Release, type ReleaseAsset } from "./release.js";
+import { debug } from "@actions/core";
+import { getOctokit } from "@actions/github";
+import { vi } from "vitest";
+import { getTectonicRelease, Release, type ReleaseAsset } from "./release.js";
+
+vi.mock("@actions/core", () => ({
+  debug: vi.fn(),
+}));
+
+vi.mock("@actions/github", () => ({
+  getOctokit: vi.fn(),
+}));
 
 describe("release", () => {
   const tectonic012Assets: ReleaseAsset[] = [
@@ -88,6 +99,108 @@ describe("release", () => {
         name: "tectonic-0.10.0-x86_64.AppImage",
         url: "https://github.com/tectonic-typesetting/tectonic/releases/download/tectonic%400.10.0/tectonic-0.10.0-x86_64.AppImage",
       });
+    });
+  });
+
+  describe("getLatestRelease", () => {
+    const mockTectonicRelease = {
+      id: 12345,
+      tag_name: "tectonic@0.15.0",
+      name: "tectonic 0.15.0",
+      assets: [
+        {
+          name: "tectonic-0.15.0-x86_64-unknown-linux-gnu.tar.gz",
+          browser_download_url: "https://example.com/tectonic.tar.gz",
+        },
+      ],
+    };
+
+    const mockComponentRelease = {
+      id: 99999,
+      tag_name: "tectonic_xetex_layout@0.1.0",
+      name: "tectonic_xetex_layout 0.1.0",
+      assets: [],
+    };
+
+    beforeEach(() => {
+      vi.resetAllMocks();
+    });
+
+    it("should use fast path when latest release is a tectonic@ release", async () => {
+      const mockGetLatestRelease = vi.fn().mockResolvedValue({
+        data: mockTectonicRelease,
+      });
+      const mockPaginate = vi.fn();
+
+      vi.mocked(getOctokit).mockReturnValue({
+        rest: {
+          repos: {
+            getLatestRelease: mockGetLatestRelease,
+          },
+        },
+        paginate: mockPaginate,
+      } as unknown as ReturnType<typeof getOctokit>);
+
+      const release = await getTectonicRelease("fake-token");
+
+      expect(mockGetLatestRelease).toHaveBeenCalledOnce();
+      expect(mockPaginate).not.toHaveBeenCalled();
+      expect(release.tagName).toBe("tectonic@0.15.0");
+      expect(release.version).toBe("0.15.0");
+      expect(debug).toHaveBeenCalledWith(
+        "Latest release is a tectonic release, returning it",
+      );
+    });
+
+    it("should fall back to pagination when latest release is a component", async () => {
+      const mockGetLatestRelease = vi.fn().mockResolvedValue({
+        data: mockComponentRelease,
+      });
+      const mockPaginate = vi.fn().mockResolvedValue([mockTectonicRelease]);
+
+      vi.mocked(getOctokit).mockReturnValue({
+        rest: {
+          repos: {
+            getLatestRelease: mockGetLatestRelease,
+            listReleases: vi.fn(),
+          },
+        },
+        paginate: mockPaginate,
+      } as unknown as ReturnType<typeof getOctokit>);
+
+      const release = await getTectonicRelease("fake-token");
+
+      expect(mockGetLatestRelease).toHaveBeenCalledOnce();
+      expect(mockPaginate).toHaveBeenCalledOnce();
+      expect(release.tagName).toBe("tectonic@0.15.0");
+      expect(release.version).toBe("0.15.0");
+      expect(debug).toHaveBeenCalledWith(
+        "Latest release is a component, falling back to paginated search",
+      );
+      expect(debug).toHaveBeenCalledWith(
+        "Found tectonic release: tectonic@0.15.0",
+      );
+    });
+
+    it("should throw error when no tectonic release is found", async () => {
+      const mockGetLatestRelease = vi.fn().mockResolvedValue({
+        data: mockComponentRelease,
+      });
+      const mockPaginate = vi.fn().mockResolvedValue([]);
+
+      vi.mocked(getOctokit).mockReturnValue({
+        rest: {
+          repos: {
+            getLatestRelease: mockGetLatestRelease,
+            listReleases: vi.fn(),
+          },
+        },
+        paginate: mockPaginate,
+      } as unknown as ReturnType<typeof getOctokit>);
+
+      await expect(getTectonicRelease("fake-token")).rejects.toThrow(
+        "Could not get latest tectonic release",
+      );
     });
   });
 });
