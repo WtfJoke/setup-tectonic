@@ -29,7 +29,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "3.0.0",
+    "@actions/core": "3.0.1",
     "@actions/github": "9.0.0",
     "@actions/io": "3.0.2",
     "@actions/tool-cache": "4.0.0",
