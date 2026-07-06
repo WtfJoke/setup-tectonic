@@ -40,7 +40,7 @@
     "@octokit/types": "16.0.0",
     "@types/node": "25.9.4",
     "@types/semver": "7.7.1",
-    "@vercel/ncc": "0.38.4",
+    "@vercel/ncc": "0.44.0",
     "@vitest/coverage-v8": "4.1.9",
     "js-yaml": "4.2.0",
     "typescript": "6.0.3",
