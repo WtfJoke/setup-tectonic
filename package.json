@@ -36,15 +36,15 @@
     "semver": "7.8.5"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.16",
+    "@biomejs/biome": "2.5.3",
     "@octokit/types": "16.0.0",
-    "@types/node": "25.9.4",
+    "@types/node": "26.1.1",
     "@types/semver": "7.7.1",
-    "@vercel/ncc": "0.44.0",
-    "@vitest/coverage-v8": "4.1.9",
-    "js-yaml": "4.2.0",
-    "typescript": "6.0.3",
-    "vitest": "4.1.9",
-    "webpack": "5.105.4"
+    "@vercel/ncc": "0.44.1",
+    "@vitest/coverage-v8": "4.1.10",
+    "js-yaml": "5.2.1",
+    "typescript": "7.0.2",
+    "vitest": "4.1.10",
+    "webpack": "5.108.4"
   }
 }
