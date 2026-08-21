@@ -1,4 +1,4 @@
-name: 'CI'
+name: "CI"
 on:
   pull_request:
   push:
@@ -11,11 +11,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v7.0.0
         with:
-          node-version-file: '.nvmrc'
-          cache: 'npm'
+          node-version-file: ".nvmrc"
+          cache: "npm"
       - name: Install dependencies
         run: |
-          npm install
+          npm ci
       - name: Build + package + tests
         run: |
           npm run all
