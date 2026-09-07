@@ -38,7 +38,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.5.10",
     "@octokit/types": "17.0.0",
-    "@types/node": "26.1.2",
+    "@types/node": "26.2.0",
     "@types/semver": "7.7.1",
     "@vercel/ncc": "0.44.1",
     "@vitest/coverage-v8": "4.1.10",
