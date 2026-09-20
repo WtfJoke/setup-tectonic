@@ -36,7 +36,7 @@
     "semver": "7.8.5"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.11",
+    "@biomejs/biome": "2.5.12",
     "@octokit/types": "17.0.0",
     "@types/node": "26.4.0",
     "@types/semver": "7.8.0",
