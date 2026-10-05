@@ -45,6 +45,6 @@
     "js-yaml": "5.4.2",
     "typescript": "7.0.2",
     "vitest": "4.1.11",
-    "webpack": "5.111.0"
+    "webpack": "5.111.1"
   }
 }
