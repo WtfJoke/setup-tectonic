@@ -41,10 +41,10 @@
     "@types/node": "26.6.5",
     "@types/semver": "7.8.0",
     "@vercel/ncc": "0.45.0",
-    "@vitest/coverage-v8": "4.1.11",
+    "@vitest/coverage-v8": "4.1.12",
     "js-yaml": "5.4.3",
     "typescript": "7.0.2",
-    "vitest": "4.1.11",
+    "vitest": "4.1.12",
     "webpack": "5.111.1"
   }
 }
